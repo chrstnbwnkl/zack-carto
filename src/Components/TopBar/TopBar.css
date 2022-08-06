@@ -6,7 +6,8 @@
 
 .headline {
   position: relative;
-  left: 40%;
+  left: 25%;
+  width: 50%;
   transform: translateX(-50%);
 }
 .headline > .title-wrapper {
@@ -23,7 +24,8 @@
   font-size: small;
 }
 
-.control-wrapper > button {
+.control-wrapper > button,
+.headline-wrapper > button {
   padding: 5px 10px;
   border-color: rgba(255, 255, 255, 0);
   border-radius: 3px;
@@ -47,10 +49,21 @@
 
 .control-wrapper > .greyed-out {
   background-color: #888888;
-  pointer-events: none;
+  cursor: help;
 }
+
+.control-wrapper > .greyed-out:hover {
+  border-color: rgba(255, 255, 255, 0);
+}
+
+.headline-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .spinner {
-  animation: spin infinite 5s linear;
+  animation: spin infinite 3s linear;
 }
 
 @keyframes spin {
@@ -59,11 +72,5 @@
   }
   to {
     transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 600px) {
-  .headline > * > p {
-    display: none;
   }
 }

@@ -7,19 +7,31 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 
 import "./TopBar.css"
+import UploadForm from "../UploadForm/UploadForm"
 
-const TopBar = ({ onRun, onDownload, isLoading, isDownloadable }) => {
+const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
   const icon = isLoading ? faSpinner : faPlay
   const iconClassName = isLoading ? "spinner" : ""
   const dlBtnClassName = `btn-export ${isDownloadable ? "" : "greyed-out"}`
+  console.log(isDownloadable)
   return (
     <>
       <div className="control-wrapper">
-        <button className="btn-run" onClick={() => onRun()}>
+        <button
+          className="btn-run"
+          onClick={() => onRun()}
+          title="Run overpass query"
+        >
           <b>Run &nbsp;</b>
           <FontAwesomeIcon icon={icon} className={iconClassName} />
         </button>
-        <button className={dlBtnClassName} onClick={() => onDownload()}>
+        <button
+          className={dlBtnClassName}
+          onClick={() => onDownload()}
+          title={
+            isDownloadable ? "Download as SVG" : "You need to run a query first"
+          }
+        >
           <b>Download SVG &nbsp;</b>
           <FontAwesomeIcon icon={faDownload} />
         </button>
@@ -28,13 +40,14 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable }) => {
         <div className="headline">
           <div className="title-wrapper">
             <h1>
-              Zack ⚡ [<i>t͡sak</i>]
+              Zack&nbsp;⚡&nbsp;[<i>t͡sak</i>]
             </h1>
             <p>
               (from German, exclaimed when something needs to happen instantly)
             </p>
           </div>
         </div>
+        <UploadForm onUpload={onUpload} />
       </div>
     </>
   )

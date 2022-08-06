@@ -33,7 +33,7 @@ label {
   height: 100vh;
 
   display: grid;
-  grid-template-columns: 10% 10% 1fr;
+  grid-template-columns: 150px 150px 1fr;
   grid-template-rows: 70px calc(100vh - 110px) 40px;
   grid-template-areas:
     "control control header"
@@ -83,9 +83,45 @@ label {
 
 .config-wrapper > h3 {
   text-align: center;
+  padding-right: 3px;
 }
 
 .config-wrapper > p {
   padding-left: 10px;
   padding-bottom: 10px;
+}
+
+@media (max-width: 1200px) {
+  .headline > * > p {
+    display: none;
+  }
+  .headline > * > h1 {
+    font-size: x-large;
+  }
+}
+
+@media (max-width: 800px) {
+  .app {
+    grid-template-columns: 70px 70px 1fr;
+  }
+  .config-wrapper > * {
+    font-size: small;
+  }
+
+  .control-wrapper > button,
+  .headline-wrapper > button,
+  .btn-upload {
+    padding: 0px;
+    font-size: x-small;
+  }
+
+  .slider {
+    position: relative;
+  }
+  input[type="range"] {
+    width: 100px;
+  }
+  .headline > * > h1 {
+    font-size: medium;
+  }
 }

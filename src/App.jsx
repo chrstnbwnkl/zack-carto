@@ -58,6 +58,22 @@ export const App = () => {
 
     window.URL.revokeObjectURL(a.href)
   }
+
+  const handleUpload = (fileArray) => {
+    const promises = Array.prototype.map.call(fileArray, (file) => {
+      return new Promise((resolve, reject) => {
+        file
+          .text()
+          .then((geojsonStr) => {
+            resolve(geojsonStr)
+          })
+          .catch((err) => reject(err))
+      })
+    })
+    Promise.all(promises).then((geojsonStrs) => {
+      geojsonStrs.map(console.log) // TODO: attach _foreign attr and handle in map and svg
+    })
+  }
   return (
     <div className="app">
       <TopBar
@@ -65,6 +81,7 @@ export const App = () => {
         onDownload={handleDownload}
         isLoading={isLoading}
         isDownloadable={Boolean(features)}
+        onUpload={handleUpload}
       />
       <div className="mapContainer">
         <Map onMove={setBounds} features={features} />
