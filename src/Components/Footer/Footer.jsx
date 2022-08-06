@@ -6,7 +6,10 @@ const Footer = (props) => {
   return (
     <footer>
       <div className="copyright">
-        <p>© Christian Beiwinkel 2022</p>
+        <p>
+          © <a href="https://github.com/chrstnbwnkl">Christian Beiwinkel</a>{" "}
+          2022
+        </p>
       </div>
     </footer>
   )

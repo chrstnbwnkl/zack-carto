@@ -24,10 +24,17 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable }) => {
           <FontAwesomeIcon icon={faDownload} />
         </button>
       </div>
-      <div className="headline">
-        <h1>
-          Zack ⚡ [<i>t͡sak</i>]
-        </h1>
+      <div className="headline-wrapper">
+        <div className="headline">
+          <div className="title-wrapper">
+            <h1>
+              Zack ⚡ [<i>t͡sak</i>]
+            </h1>
+            <p>
+              (from German, exclaimed when something needs to happen instantly)
+            </p>
+          </div>
+        </div>
       </div>
     </>
   )

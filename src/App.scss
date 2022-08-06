@@ -2,6 +2,7 @@
 body,
 html {
   margin: 0;
+  overflow: hidden;
   --main-spacing: 0px 0px 0px 0px;
   --header-footer-spacing: 0px 10px;
   --head-foot-bg: rgb(128, 173, 156);
@@ -10,21 +11,22 @@ html {
 h1,
 h2 {
   letter-spacing: 0.05em;
+  animation: fadein 1s;
 }
 
-h1:hover,
-h2:hover {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-h3,
-h4,
-h5,
-h6,
 p,
 label {
-  font-family: "Questrial", sans-serif;
+  font-family: Arial, Helvetica, Sans-Serif;
+  animation: fadein 1s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .app {
@@ -48,7 +50,7 @@ label {
     grid-area: config;
   }
 
-  > .headline {
+  > .headline-wrapper {
     grid-area: header;
     background-color: var(--head-foot-bg);
   }
@@ -75,4 +77,9 @@ label {
 
 .config-wrapper > h3 {
   text-align: center;
+}
+
+.config-wrapper > p {
+  padding-left: 10px;
+  padding-bottom: 10px;
 }

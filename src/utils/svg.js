@@ -1,47 +1,19 @@
-import * as d3 from "d3"
+import * as d3Geo from "d3-geo"
+import * as d3Selection from "d3-selection"
 
-export const TEST_FEATURES = [
-  {
-    type: "Feature",
-    geometry: {
-      type: "LineString",
-      coordinates: [
-        [8.133689, 51.8075208],
-        [8.1344837, 51.8077909],
-      ],
-    },
-    id: 19,
-    properties: {
-      highway: "motorway",
-      int_ref: "E 34",
-      lanes: "4",
-      lit: "no",
-      maxspeed: "none",
-      "note:name":
-        "Der reg_name, sowie ggf. der loc_name sind dem zugehörigen Wikipediaartikel entnommen.",
-      oneway: "yes",
-      ref: "A 2",
-      reg_name: "Warschauer Allee",
-      "source:lit": "http://www.autobahn-bilder.de",
-      "source:maxspeed": "DE:motorway",
-      surface: "asphalt",
-      "turn:lanes": "none|none|none|merge_to_left",
-      _osm_type: "way",
-    },
-  },
-]
+const d3 = { ...d3Geo, ...d3Selection }
 
 export const featuresToSvg = (features) => {
   const fc = {
     type: "FeatureCollection",
     features: features,
   }
-  const [width, height] = [1000, 1000]
+  const [width, height, buffer] = [1000, 1000, 100]
 
   const projection = d3.geoTransverseMercator().fitExtent(
     [
-      [0, 0],
-      [width, height],
+      [buffer, buffer],
+      [width - buffer, height - buffer],
     ],
     fc
   )
@@ -56,44 +28,86 @@ export const featuresToSvg = (features) => {
     .attr("version", 1.1)
     .attr("xmlns", "http://www.w3.org/2000/svg")
 
-  const roads = svg
+  const roads = svg.append("g").attr("id", "roads")
+
+  roads
     .selectAll(".roads")
     .data(features.filter((f) => f.properties.highway !== undefined))
     .enter()
+    .append("g")
+    .attr("id", (d) => d.id)
+    .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
     .append("path")
     .attr("d", path)
     .attr("stroke", "#000000")
-    .attr("stroke-width", 2)
+    .attr("stroke-width", (d) => ATTR_MAP[d.properties.highway])
     .attr("fill", "none")
 
-  const waterways = svg
+  const waterways = svg.append("g").attr("id", "waterways")
+
+  waterways
     .selectAll(".waterways")
     .data(features.filter((f) => f.properties.waterway !== undefined))
     .enter()
+    .append("g")
+    .attr("id", (d) => d.id)
+    .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
     .append("path")
     .attr("d", path)
     .attr("stroke", "#4287f5")
-    .attr("stroke-width", 3)
+    .attr("stroke-width", (d) => ATTR_MAP[d.properties.waterway])
     .attr("fill", "none")
 
-  const places = svg
+  const places = svg.append("g").attr("id", "places")
+
+  places
     .selectAll(".places")
     .data(features.filter((f) => f.properties.place !== undefined))
     .enter()
-    .append("path")
+    .append("g")
+    .attr("id", (d) => d.id)
+    .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
     .append("circle")
-    .attr("cx", function (d) {
-      return projection(d.geometry.coordinates)[0]
-    })
-    .attr("cy", function (d) {
-      return projection(d.geometry.coordinates)[1]
-    })
-    .attr("r", `${7}px`)
-    .attr("fill", "rgba(255,255,0, 1)")
+    .attr("cx", (d) => projection(d.geometry.coordinates)[0])
+    .attr("cy", (d) => projection(d.geometry.coordinates)[1])
+    .attr("r", (d) => ATTR_MAP[d.properties.place])
+    .attr("fill", "#ffffff")
     .attr("stroke-width", "1px")
-    .attr("stroke", "rgba(255,255,0, 1)")
+    .attr("stroke", "#000000")
 
   const serializer = new window.XMLSerializer()
   const string = serializer.serializeToString(svg.node())
   return string
+}
+
+const ATTR_MAP = {
+  city: 6,
+  town: 4,
+  suburb: 3,
+  neighborhood: 2,
+  village: 2,
+  river: 5,
+  stream: 3,
+  canal: 2,
+  drain: 1,
+  ditch: 1,
+  motorway: 6,
+  primary: 4,
+  secondary: 3,
+  tertiary: 2,
+  residential: 1,
+  service: 1,
+  unclassified: 1,
+}
+
+const filterProps = (props) => {
+  const allowed = ["name", "highway", "place", "waterway"]
+
+  const filtered = Object.keys(props)
+    .filter((k) => allowed.includes(k))
+    .reduce((obj, key) => {
+      obj[key] = props[key]
+      return obj
+    }, {})
+  return filtered
 }

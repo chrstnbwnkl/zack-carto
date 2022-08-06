@@ -6,7 +6,7 @@ import { to_valid_geojson, queryOverpass } from "./utils/api.js"
 
 import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
-import { featuresToSvg, TEST_FEATURES } from "./utils/svg"
+import { featuresToSvg } from "./utils/svg"
 
 export const App = () => {
   const [bounds, setBounds] = useState(null)
@@ -39,14 +39,13 @@ export const App = () => {
         setFeatures(res.data.elements.map((el) => to_valid_geojson(el)))
         setIsLoading(false)
       })
-      .then(console.log(JSON.stringify(features)))
       .catch((reason) => {
         console.log(reason)
         setIsLoading(false)
         setError("Something went wrong while fetching the data.")
       })
   }
-  const handleDownload = (e) => {
+  const handleDownload = () => {
     const a = document.createElement("a")
     a.style.display = "none"
 
@@ -71,7 +70,15 @@ export const App = () => {
         <Map onMove={setBounds} features={features} />
       </div>
       <div className="config-wrapper">
-        <h3>Geodata within seconds!</h3>
+        <h3>Geodata to SVG within seconds</h3>
+        <p>
+          Pick a level of detail for each category, run the query, and download
+          it as SVG. Read more about how it works{" "}
+          <a href="https://github.com/chrstnbwnkl/zack-carto/blob/main/README.md">
+            here
+          </a>
+          .
+        </p>
         <ConfigureTab
           roadSliderVal={roadDetail}
           onRoadSliderChange={setRoadDetail}

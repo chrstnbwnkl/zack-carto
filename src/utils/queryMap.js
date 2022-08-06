@@ -5,6 +5,7 @@ export const QUERY_MAP = {
     query: [
       "",
       'way[highway="motorway"]',
+      'way[highway="trunk"]',
       'way[highway="primary"]',
       'way[highway="secondary"]',
       'way[highway="tertiary"]',
@@ -15,6 +16,7 @@ export const QUERY_MAP = {
     text_repr: [
       NoneRepr,
       "motorways",
+      "trunk motorways",
       "primary roads",
       "secondary roads",
       "tertiary roads",
