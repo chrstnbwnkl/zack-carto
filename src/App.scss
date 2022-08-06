@@ -34,7 +34,7 @@ label {
 
   display: grid;
   grid-template-columns: 10% 10% 1fr;
-  grid-template-rows: 10% 1fr 5%;
+  grid-template-rows: 70px calc(100vh - 110px) 40px;
   grid-template-areas:
     "control control header"
     "config config map"
@@ -48,6 +48,8 @@ label {
 
   > .config-wrapper {
     grid-area: config;
+    height: calc(100vh - 110px);
+    overflow-y: scroll;
   }
 
   > .headline-wrapper {

@@ -14,12 +14,11 @@
 }
 
 .headline > * > h1 {
-  margin-top: 7px;
+  margin-top: 5px;
   margin-bottom: 0px;
 }
 
 .headline > * > p {
-  margin-bottom: 10px;
   margin-top: 3px;
   font-size: small;
 }
@@ -60,5 +59,11 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .headline > * > p {
+    display: none;
   }
 }
