@@ -5,6 +5,7 @@ html {
   --main-spacing: 0px 0px 0px 0px;
   --header-footer-spacing: 0px 10px;
   --head-foot-bg: rgb(128, 173, 156);
+  overflow: hidden;
 }
 
 h1,
@@ -33,7 +34,7 @@ label {
 
   display: grid;
   grid-template-columns: 10% 10% 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 10% 1fr 5%;
   grid-template-areas:
     "control control header"
     "config config map"
@@ -71,6 +72,10 @@ label {
 
   > footer {
     grid-area: footer;
+  }
+
+  > * {
+    min-height: 0px;
   }
 }
 
