@@ -1,0 +1,48 @@
+.control-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.headline > h1 {
+  position: relative;
+  left: 30%;
+}
+
+.control-wrapper > button {
+  padding: 5px 10px;
+  border-color: rgba(255, 255, 255, 0);
+  border-radius: 3px;
+  color: white;
+  box-shadow: 2px 2px #888888;
+  cursor: pointer;
+}
+
+.control-wrapper > button:hover {
+  border-color: rgb(255, 255, 255);
+}
+
+.control-wrapper > .btn-run {
+  background-color: rgb(86, 202, 96);
+}
+
+.control-wrapper > .btn-export {
+  background-color: rgb(251, 92, 92);
+}
+
+.control-wrapper > .greyed-out {
+  background-color: #888888;
+  pointer-events: none;
+}
+.spinner {
+  animation: spin infinite 5s linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Questrial&display=swap");
+body,
+html {
+  margin: 0;
+  --main-spacing: 0px 0px 0px 0px;
+  --header-footer-spacing: 0px 10px;
+  --head-foot-bg: rgb(128, 173, 156);
+}
+
+h1,
+h2 {
+  letter-spacing: 0.05em;
+}
+
+h1:hover,
+h2:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+h3,
+h4,
+h5,
+h6,
+p,
+label {
+  font-family: "Questrial", sans-serif;
+}
+
+.app {
+  height: 100vh;
+
+  display: grid;
+  grid-template-columns: 10% 10% 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "control control header"
+    "config config map"
+    "footer footer footer";
+
+  > header,
+  > footer {
+    padding: var(--header-footer-spacing);
+    background-color: var(--head-foot-bg);
+  }
+
+  > .config-wrapper {
+    grid-area: config;
+  }
+
+  > .headline {
+    grid-area: header;
+    background-color: var(--head-foot-bg);
+  }
+
+  > .control-wrapper {
+    grid-area: control;
+    background-color: var(--head-foot-bg);
+  }
+
+  > .mapContainer {
+    grid-area: map;
+    padding: var(--main-spacing);
+    overflow: auto;
+
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  > footer {
+    grid-area: footer;
+  }
+}
+
+.config-wrapper > h3 {
+  text-align: center;
+}

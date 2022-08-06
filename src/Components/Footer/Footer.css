@@ -1,0 +1,8 @@
+.copyright {
+  display: flex;
+  justify-content: center;
+}
+
+.copyright > p {
+  font-size: small;
+}
