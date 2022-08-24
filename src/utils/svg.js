@@ -34,7 +34,7 @@ export const featuresToSvg = (features) => {
     .selectAll(".roads")
     .data(features.filter((f) => f.properties.highway !== undefined))
     .enter()
-    .append("g")
+    .append("g") // TODO: further grouping by tag
     .attr("id", (d) => d.id)
     .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
     .append("path")

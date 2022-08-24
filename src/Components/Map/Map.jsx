@@ -10,8 +10,8 @@ const Map = ({ onMove, features }) => {
 
   useEffect(() => {
     mapRef.current = L.map("map", {
-      center: [51.8, 8.205],
-      zoom: 13,
+      center: [50.93, 6.95],
+      zoom: 11,
       renderer: L.canvas(),
     })
     const osm = L.tileLayer(

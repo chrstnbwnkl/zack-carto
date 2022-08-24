@@ -13,9 +13,9 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [features, setFeatures] = useState(null)
-  const [roadDetail, setRoadDetail] = useState(2)
-  const [riverDetail, setRiverDetail] = useState(0)
-  const [citiesDetail, setCitiesDetail] = useState(0)
+  const [roadDetail, setRoadDetail] = useState(4)
+  const [riverDetail, setRiverDetail] = useState(3)
+  const [citiesDetail, setCitiesDetail] = useState(4)
 
   const reqObj = {
     Roads: roadDetail,
