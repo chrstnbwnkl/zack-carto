@@ -10,6 +10,16 @@
   width: 50%;
   transform: translateX(-50%);
 }
+
+.title-wrapper > * > a {
+  text-decoration: none;
+  color: black;
+}
+
+.title-wrapper > * > a:hover {
+  text-decoration: underline;
+}
+
 .headline > .title-wrapper {
   text-align: center;
 }

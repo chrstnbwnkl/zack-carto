@@ -1,20 +1,25 @@
-const NoneRepr = "none"
+const NONE_DISPLAY = "none"
 
-export const QUERY_MAP = {
-  Roads: {
-    query: [
-      "",
-      'way[highway="motorway"]',
-      'way[highway="trunk"]',
-      'way[highway="primary"]',
-      'way[highway="secondary"]',
-      'way[highway="tertiary"]',
-      'way[highway="residential"]',
-      'way[highway="service"]',
-      'way[highway="unclassified"]',
+export const CONFIG = {
+  roads: {
+    title: "Roads",
+    values: [
+      ["motorway", "trunk"],
+      "primary",
+      "secondary",
+      "tertiary",
+      ["residential", "service", "unclassified"],
     ],
-    text_repr: [
-      NoneRepr,
+    get query() {
+      return [
+        "",
+        ...this.values.map((v) => {
+          return `way[highway="${v}"]`
+        }),
+      ]
+    },
+    displayNames: [
+      NONE_DISPLAY,
       "motorways",
       "trunk motorways",
       "primary roads",
@@ -22,28 +27,47 @@ export const QUERY_MAP = {
       "tertiary roads",
       "all roads",
     ],
+    filter: (properties) => properties["highway"] !== undefined,
+    defaultStyle: {},
+    defaultDetail: 3,
   },
-  Waterways: {
-    query: [
-      "",
-      'way[waterway="river"]',
-      'way[waterway="stream"]',
-      'way[waterway="canal"]',
-      'way[waterway="drain"]',
-      'way[waterway="ditch"]',
+  waterways: {
+    title: "Waterways",
+    values: ["river", "stream", "canal", ["drain", "ditch"]],
+    get query() {
+      return [
+        "",
+        ...this.values.map((v) => {
+          return `way[waterway="${v}"]`
+        }),
+      ]
+    },
+    displayNames: [
+      NONE_DISPLAY,
+      "rivers",
+      "streams",
+      "canals",
+      "all waterways",
     ],
-    text_repr: [NoneRepr, "rivers", "streams", "canals", "all waterways"],
+    filter: (properties) => properties["waterway"] !== undefined,
+    defaultStyle: {},
+    defaultDetail: 3,
   },
-  Places: {
-    query: [
-      "",
-      'node[place="city"]',
-      'node[place="town"]',
-      'node[place="suburb"]',
-      'node[place="neighborhood"]',
-      'node[place="village"]',
-    ],
-    text_repr: [NoneRepr, "cities", "towns", "suburbs", "all places"],
+  places: {
+    title: "Places",
+    values: ["city", "town", "suburb", ["neighborhood", "village"]],
+    get query() {
+      return [
+        "",
+        ...this.values.map((v) => {
+          return `node[place="${v}"]`
+        }),
+      ]
+    },
+    displayNames: [NONE_DISPLAY, "cities", "towns", "suburbs", "all places"],
+    filter: (properties) => properties["place"] !== undefined,
+    defaultStyle: {},
+    defaultDetail: 3,
   },
 }
 

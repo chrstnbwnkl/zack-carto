@@ -4,14 +4,20 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import "./Map.css"
 
-const Map = ({ onMove, features }) => {
+const Map = ({ view, onMove, features }) => {
   const [mapInstance, setMapInstance] = useState(null)
   const mapRef = useRef(null)
 
+  const handleMove = (e) => {
+    const center = e.target.getCenter()
+    const zoom = e.target.getZoom()
+    onMove(e.target.getBounds(), [center.lat, center.lng], zoom)
+  }
+
   useEffect(() => {
     mapRef.current = L.map("map", {
-      center: [50.93, 6.95],
-      zoom: 11,
+      center: view.center,
+      zoom: view.zoom,
       renderer: L.canvas(),
     })
     const osm = L.tileLayer(
@@ -23,9 +29,9 @@ const Map = ({ onMove, features }) => {
     )
     osm.addTo(mapRef.current)
     setMapInstance(mapRef.current)
-    onMove(mapRef.current.getBounds())
+
     mapRef.current.on("move", (e) => {
-      onMove(e.target.getBounds())
+      handleMove(e)
     })
   }, []) // only render once
 

@@ -7,8 +7,13 @@ import { to_valid_geojson, queryOverpass } from "./utils/api.js"
 import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
 import { featuresToSvg } from "./utils/svg"
+import { useLocalStorage } from "./utils/hooks"
 
-export const App = () => {
+export const App = ({ config }) => {
+  const [mapDefaults, setMapDefaults] = useLocalStorage(
+    "mapstate",
+    JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
+  )
   const [bounds, setBounds] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -59,6 +64,12 @@ export const App = () => {
     window.URL.revokeObjectURL(a.href)
   }
 
+  const handleMove = (bounds, center, zoom) => {
+    setBounds(bounds)
+    console.log("Handle move called: " + center + " " + zoom)
+    setMapDefaults(JSON.stringify({ center: center, zoom: zoom }))
+  }
+
   const handleUpload = (fileArray) => {
     const promises = Array.prototype.map.call(fileArray, (file) => {
       return new Promise((resolve, reject) => {
@@ -84,7 +95,11 @@ export const App = () => {
         onUpload={handleUpload}
       />
       <div className="mapContainer">
-        <Map onMove={setBounds} features={features} />
+        <Map
+          view={JSON.parse(mapDefaults)}
+          onMove={handleMove}
+          features={features}
+        />
       </div>
       <div className="config-wrapper">
         <h3>Geodata to SVG within seconds</h3>
