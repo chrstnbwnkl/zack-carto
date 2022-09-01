@@ -1,5 +1,4 @@
 import axios from "axios"
-import { QUERY_MAP } from "./queryMap"
 
 const OVERPASS_URL = "https://lz4.overpass-api.de/api/interpreter"
 

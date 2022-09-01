@@ -1,5 +1,5 @@
 import React from "react"
-import { makeReadableEnumeration, QUERY_MAP } from "../../utils/queryMap"
+import { makeReadableEnumeration, QUERY_MAP } from "../../utils/config"
 
 import "./ConfigureItem.css"
 

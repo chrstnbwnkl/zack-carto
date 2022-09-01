@@ -1,5 +1,16 @@
 const NONE_DISPLAY = "none"
 
+class TagConfig {
+  constructor(
+    title,
+    queryTemplate,
+    values,
+    filter,
+    defaultStyle,
+    defaultDetail
+  ) {}
+}
+
 export const CONFIG = {
   roads: {
     title: "Roads",
@@ -14,7 +25,13 @@ export const CONFIG = {
       return [
         "",
         ...this.values.map((v) => {
-          return `way[highway="${v}"]`
+          if (Array.isArray(v)) {
+            return v.map((n) => {
+              return `way[highway="${n}"]`
+            })
+          } else {
+            return `way[highway="${v}"]`
+          }
         }),
       ]
     },

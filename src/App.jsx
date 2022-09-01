@@ -8,16 +8,23 @@ import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
 import { featuresToSvg } from "./utils/svg"
 import { useLocalStorage } from "./utils/hooks"
+import { CONFIG } from "./utils/config"
 
 export const App = ({ config }) => {
   const [mapDefaults, setMapDefaults] = useLocalStorage(
     "mapstate",
     JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
   )
-  const [bounds, setBounds] = useState(null)
+
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [features, setFeatures] = useState(null)
+  const [detail, setDetail] = useState(
+    Object.keys(config).reduce((prev, tag) => {
+      return { ...prev, [tag]: config[tag].defaultDetail }
+    }, {})
+  )
+
   const [roadDetail, setRoadDetail] = useState(4)
   const [riverDetail, setRiverDetail] = useState(3)
   const [citiesDetail, setCitiesDetail] = useState(4)

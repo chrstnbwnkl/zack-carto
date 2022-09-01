@@ -27,7 +27,7 @@ export const featuresToSvg = (features) => {
     .attr("title", "zack_download")
     .attr("version", 1.1)
     .attr("xmlns", "http://www.w3.org/2000/svg")
-
+    
   const roads = svg.append("g").attr("id", "roads")
 
   roads
