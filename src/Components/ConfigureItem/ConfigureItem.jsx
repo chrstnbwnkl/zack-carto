@@ -3,7 +3,7 @@ import { makeReadableEnumeration } from "../../utils/misc"
 
 import "./ConfigureItem.css"
 
-const ConfigureItem = ({ config, sliderVal, onSliderChange }) => {
+const ConfigureItem = ({ config, itemKey, sliderVal, onSliderChange }) => {
   const selectText = makeReadableEnumeration(config.displayNames, sliderVal)
   return (
     <div className="configure-item">
@@ -16,9 +16,13 @@ const ConfigureItem = ({ config, sliderVal, onSliderChange }) => {
         <input
           type="range"
           min={0}
-          max={config.values.length - 1}
+          max={config.values.length}
           value={sliderVal}
-          onChange={(e) => onSliderChange(Number(e.target.value))}
+          onChange={(e) =>
+            onSliderChange((current) => {
+              return { ...current, [itemKey]: Number(e.target.value) }
+            })
+          }
         ></input>
       </div>
       <p>{selectText}</p>

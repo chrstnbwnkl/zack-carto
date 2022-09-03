@@ -24,7 +24,7 @@ const makeReqParams = (obj, boundParam) => {
   const paramArr = []
   for (const key in obj) {
     const i = obj[key]
-    const queries =
+    const queries = // TODO: overhaul to new config
       i < QUERY_MAP[key].text_repr.length - 1
         ? QUERY_MAP[key].query.slice(1, i + 1)
         : QUERY_MAP[key].query.slice(1)

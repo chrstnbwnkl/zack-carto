@@ -12,12 +12,16 @@ const ConfigureTab = ({ config, sliderVals, handleSlidersChanged, error }) => {
         {Object.keys(config).map((k) => {
           const c = config[k]
           return (
-            <ConfigureItem
-              key={k}
-              config={c}
-              sliderVal={sliderVals[k]}
-              onSliderChange={handleSlidersChanged}
-            />
+            <>
+              <ConfigureItem
+                key={k}
+                itemKey={k}
+                config={c}
+                sliderVal={sliderVals[k]}
+                onSliderChange={handleSlidersChanged}
+              />
+              <hr />
+            </>
           )
         })}
         {/* <ConfigureItem

@@ -24,10 +24,6 @@ export const App = ({ config }) => {
     }, {})
   )
 
-  // const [roadDetail, setRoadDetail] = useState(4)
-  // const [riverDetail, setRiverDetail] = useState(3)
-  // const [citiesDetail, setCitiesDetail] = useState(4)
-
   // const reqObj = {
   //   Roads: roadDetail,
   //   Waterways: riverDetail,
@@ -45,16 +41,22 @@ export const App = ({ config }) => {
       return
     }
     setError("")
-    queryOverpass(reqObj, bounds)
-      .then((res) => {
-        setFeatures(res.data.elements.map((el) => to_valid_geojson(el)))
-        setIsLoading(false)
-      })
-      .catch((reason) => {
-        console.log(reason)
-        setIsLoading(false)
-        setError("Something went wrong while fetching the data.")
-      })
+    const requestObj = Object.keys(config).reduce((prev, k) => {
+      const c = config[k]
+      const d = detail[k]
+      return { ...prev, [k]: { ...c, detail: d } }
+    }, {})
+
+    // queryOverpass(reqObj, bounds)
+    //   .then((res) => {
+    //     setFeatures(res.data.elements.map((el) => to_valid_geojson(el)))
+    //     setIsLoading(false)
+    //   })
+    //   .catch((reason) => {
+    //     console.log(reason)
+    //     setIsLoading(false)
+    //     setError("Something went wrong while fetching the data.")
+    //   })
   }
   const handleDownload = () => {
     const a = document.createElement("a")
