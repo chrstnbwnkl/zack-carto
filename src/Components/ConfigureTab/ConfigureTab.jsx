@@ -4,20 +4,23 @@ import ConfigureItem from "../ConfigureItem/ConfigureItem"
 
 import "./ConfigureTab.css"
 
-const ConfigureTab = ({
-  roadSliderVal,
-  onRoadSliderChange,
-  riverSliderVal,
-  onRiverSliderChange,
-  citiesSliderVal,
-  onCitiesSliderChange,
-  error,
-}) => {
+const ConfigureTab = ({ config, sliderVals, handleSlidersChanged, error }) => {
   const errorClsName = `error-message ${error ? "visible" : "hidden"}`
   return (
     <>
       <div className="configure-item-wrapper">
-        <ConfigureItem
+        {Object.keys(config).map((k) => {
+          const c = config[k]
+          return (
+            <ConfigureItem
+              key={k}
+              config={c}
+              sliderVal={sliderVals[k]}
+              onSliderChange={handleSlidersChanged}
+            />
+          )
+        })}
+        {/* <ConfigureItem
           type="Roads"
           sliderVal={roadSliderVal}
           onSliderChange={onRoadSliderChange}
@@ -33,7 +36,7 @@ const ConfigureTab = ({
           type="Places"
           sliderVal={citiesSliderVal}
           onSliderChange={onCitiesSliderChange}
-        />
+        /> */}
       </div>
       <div className={errorClsName}>
         <p>{error}</p>

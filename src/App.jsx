@@ -8,14 +8,13 @@ import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
 import { featuresToSvg } from "./utils/svg"
 import { useLocalStorage } from "./utils/hooks"
-import { CONFIG } from "./utils/config"
 
 export const App = ({ config }) => {
   const [mapDefaults, setMapDefaults] = useLocalStorage(
     "mapstate",
     JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
   )
-
+  const [bounds, setBounds] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [features, setFeatures] = useState(null)
@@ -25,19 +24,19 @@ export const App = ({ config }) => {
     }, {})
   )
 
-  const [roadDetail, setRoadDetail] = useState(4)
-  const [riverDetail, setRiverDetail] = useState(3)
-  const [citiesDetail, setCitiesDetail] = useState(4)
+  // const [roadDetail, setRoadDetail] = useState(4)
+  // const [riverDetail, setRiverDetail] = useState(3)
+  // const [citiesDetail, setCitiesDetail] = useState(4)
 
-  const reqObj = {
-    Roads: roadDetail,
-    Waterways: riverDetail,
-    Places: citiesDetail,
-  }
+  // const reqObj = {
+  //   Roads: roadDetail,
+  //   Waterways: riverDetail,
+  //   Places: citiesDetail,
+  // }
 
   const handleRun = () => {
     setIsLoading(true)
-    if (Object.values(reqObj).every((v) => v === 0)) {
+    if (Object.values(detail).every((v) => v === 0)) {
       setError("Query cannot be empty")
       setIsLoading(false)
       setTimeout(() => {
@@ -73,7 +72,6 @@ export const App = ({ config }) => {
 
   const handleMove = (bounds, center, zoom) => {
     setBounds(bounds)
-    console.log("Handle move called: " + center + " " + zoom)
     setMapDefaults(JSON.stringify({ center: center, zoom: zoom }))
   }
 
@@ -119,12 +117,9 @@ export const App = ({ config }) => {
           .
         </p>
         <ConfigureTab
-          roadSliderVal={roadDetail}
-          onRoadSliderChange={setRoadDetail}
-          riverSliderVal={riverDetail}
-          onRiverSliderChange={setRiverDetail}
-          citiesSliderVal={citiesDetail}
-          onCitiesSliderChange={setCitiesDetail}
+          config={config}
+          sliderVals={detail}
+          handleSlidersChanged={setDetail}
           error={error}
         />
       </div>
