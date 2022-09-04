@@ -20,7 +20,13 @@ const ConfigureItem = ({ config, itemKey, sliderVal, onSliderChange }) => {
           value={sliderVal}
           onChange={(e) =>
             onSliderChange((current) => {
-              return { ...current, [itemKey]: Number(e.target.value) }
+              return {
+                ...current,
+                [itemKey]: {
+                  ...current[itemKey],
+                  _detail: Number(e.target.value),
+                },
+              }
             })
           }
         ></input>

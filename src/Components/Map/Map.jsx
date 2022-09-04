@@ -4,7 +4,7 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import "./Map.css"
 
-const Map = ({ view, onMove, features }) => {
+const Map = ({ view, onMove, featureCollections, config }) => {
   const [mapInstance, setMapInstance] = useState(null)
   const mapRef = useRef(null)
 
@@ -19,6 +19,7 @@ const Map = ({ view, onMove, features }) => {
       center: view.center,
       zoom: view.zoom,
       renderer: L.canvas(),
+      minZoom: 10,
     })
     const osm = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -29,51 +30,40 @@ const Map = ({ view, onMove, features }) => {
     )
     osm.addTo(mapRef.current)
     setMapInstance(mapRef.current)
-
+    onMove(mapRef.current.getBounds())
     mapRef.current.on("move", (e) => {
       handleMove(e)
     })
   }, []) // only render once
 
   useEffect(() => {
-    const groups = [L.layerGroup(), L.layerGroup(), L.layerGroup()]
-    let [roadGroup, waterGroup, placeGroup] = groups
-    if (features) {
-      features.map((feat) => {
-        let layer
-        if (feat.properties.highway !== undefined) {
-          layer = L.geoJSON(feat)
-          roadGroup.addLayer(layer)
-        } else if (feat.properties.waterway !== undefined) {
-          layer = L.geoJSON(feat)
-          waterGroup.addLayer(layer)
-        } else if (feat.properties.place !== undefined) {
-          layer = L.geoJSON(feat, {
-            pointToLayer: (f, ll) => {
-              return L.circleMarker(ll, {
-                radius: 5,
-                fillColor: "#ff7800",
-                weight: 1,
-                opacity: 1,
-                fillOpacity: 0.7,
-              })
-            },
-          })
-          placeGroup.addLayer(layer)
+    const layers = []
+    if (featureCollections) {
+      for (const k in config) {
+        const c = config[k]
+        const fc = featureCollections[k]
+        console.log(featureCollections)
+        const opts = {}
+        if (c.osmElement !== "node") {
+          opts.style = c._leafletFunc
+        } else {
+          opts.pointToLayer = (feat, ll) => {
+            console.log(c._leafletFunc(feat))
+            return L.circleMarker(ll, c._leafletFunc(feat))
+          }
         }
-      })
-      roadGroup.addTo(mapInstance)
-      waterGroup.addTo(mapInstance)
-      placeGroup.addTo(mapInstance)
+        const geoJSON = L.geoJSON(fc, opts).addTo(mapInstance)
+        layers.push(geoJSON)
+      }
     }
     return () => {
-      groups.forEach((group) => {
-        if (typeof group.remove === "function") {
-          group.remove()
+      layers.forEach((layer) => {
+        if (typeof layer.remove === "function") {
+          layer.remove()
         }
       })
     }
-  }, [features])
+  }, [featureCollections])
   return <div id="map"></div>
 }
 

@@ -4,7 +4,7 @@ import ConfigureItem from "../ConfigureItem/ConfigureItem"
 
 import "./ConfigureTab.css"
 
-const ConfigureTab = ({ config, sliderVals, handleSlidersChanged, error }) => {
+const ConfigureTab = ({ config, handleSlidersChanged, error }) => {
   const errorClsName = `error-message ${error ? "visible" : "hidden"}`
   return (
     <>
@@ -12,35 +12,18 @@ const ConfigureTab = ({ config, sliderVals, handleSlidersChanged, error }) => {
         {Object.keys(config).map((k) => {
           const c = config[k]
           return (
-            <>
+            <div key={k}>
               <ConfigureItem
                 key={k}
                 itemKey={k}
                 config={c}
-                sliderVal={sliderVals[k]}
+                sliderVal={config[k]._detail}
                 onSliderChange={handleSlidersChanged}
               />
-              <hr />
-            </>
+              <hr key={`${k}--hr`} />
+            </div>
           )
         })}
-        {/* <ConfigureItem
-          type="Roads"
-          sliderVal={roadSliderVal}
-          onSliderChange={onRoadSliderChange}
-        />
-        <hr />
-        <ConfigureItem
-          type="Waterways"
-          sliderVal={riverSliderVal}
-          onSliderChange={onRiverSliderChange}
-        />
-        <hr />
-        <ConfigureItem
-          type="Places"
-          sliderVal={citiesSliderVal}
-          onSliderChange={onCitiesSliderChange}
-        /> */}
       </div>
       <div className={errorClsName}>
         <p>{error}</p>

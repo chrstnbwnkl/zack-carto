@@ -13,7 +13,6 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
   const icon = isLoading ? faSpinner : faPlay
   const iconClassName = isLoading ? "spinner" : ""
   const dlBtnClassName = `btn-export ${isDownloadable ? "" : "greyed-out"}`
-  console.log(isDownloadable)
   return (
     <>
       <div className="control-wrapper">

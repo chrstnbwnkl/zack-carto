@@ -3,19 +3,22 @@ import * as d3Selection from "d3-selection"
 
 const d3 = { ...d3Geo, ...d3Selection }
 
-export const featuresToSvg = (features) => {
-  const fc = {
+export const featureCollectionsToSvg = (fc, config) => {
+  const mergedFC = {
+    // need to merge to fit extent
     type: "FeatureCollection",
-    features: features,
+    features: Object.values().reduce((prev, v) => {
+      return [...prev, ...v.features]
+    }, []),
   }
-  const [width, height, buffer] = [1000, 1000, 100]
+  const [width, height, buffer] = [1000, 1000, 100] // TODO: bounds to aspect ratio
 
   const projection = d3.geoTransverseMercator().fitExtent(
     [
       [buffer, buffer],
       [width - buffer, height - buffer],
     ],
-    fc
+    mergedFC
   )
 
   const path = d3.geoPath(projection)
@@ -27,53 +30,53 @@ export const featuresToSvg = (features) => {
     .attr("title", "zack_download")
     .attr("version", 1.1)
     .attr("xmlns", "http://www.w3.org/2000/svg")
-    
-  const roads = svg.append("g").attr("id", "roads")
 
-  roads
-    .selectAll(".roads")
-    .data(features.filter((f) => f.properties.highway !== undefined))
-    .enter()
-    .append("g") // TODO: further grouping by tag
-    .attr("id", (d) => d.id)
-    .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
-    .append("path")
-    .attr("d", path)
-    .attr("stroke", "#000000")
-    .attr("stroke-width", (d) => ATTR_MAP[d.properties.highway])
-    .attr("fill", "none")
+  // const roads = svg.append("g").attr("id", "roads")
 
-  const waterways = svg.append("g").attr("id", "waterways")
+  // roads
+  //   .selectAll(".roads")
+  //   .data(features.filter((f) => f.properties.highway !== undefined))
+  //   .enter()
+  //   .append("g") // TODO: further grouping by tag
+  //   .attr("id", (d) => d.id)
+  //   .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
+  //   .append("path")
+  //   .attr("d", path)
+  //   .attr("stroke", "#000000")
+  //   .attr("stroke-width", (d) => ATTR_MAP[d.properties.highway])
+  //   .attr("fill", "none")
 
-  waterways
-    .selectAll(".waterways")
-    .data(features.filter((f) => f.properties.waterway !== undefined))
-    .enter()
-    .append("g")
-    .attr("id", (d) => d.id)
-    .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
-    .append("path")
-    .attr("d", path)
-    .attr("stroke", "#4287f5")
-    .attr("stroke-width", (d) => ATTR_MAP[d.properties.waterway])
-    .attr("fill", "none")
+  // const waterways = svg.append("g").attr("id", "waterways")
 
-  const places = svg.append("g").attr("id", "places")
+  // waterways
+  //   .selectAll(".waterways")
+  //   .data(features.filter((f) => f.properties.waterway !== undefined))
+  //   .enter()
+  //   .append("g")
+  //   .attr("id", (d) => d.id)
+  //   .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
+  //   .append("path")
+  //   .attr("d", path)
+  //   .attr("stroke", "#4287f5")
+  //   .attr("stroke-width", (d) => ATTR_MAP[d.properties.waterway])
+  //   .attr("fill", "none")
 
-  places
-    .selectAll(".places")
-    .data(features.filter((f) => f.properties.place !== undefined))
-    .enter()
-    .append("g")
-    .attr("id", (d) => d.id)
-    .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
-    .append("circle")
-    .attr("cx", (d) => projection(d.geometry.coordinates)[0])
-    .attr("cy", (d) => projection(d.geometry.coordinates)[1])
-    .attr("r", (d) => ATTR_MAP[d.properties.place])
-    .attr("fill", "#ffffff")
-    .attr("stroke-width", "1px")
-    .attr("stroke", "#000000")
+  // const places = svg.append("g").attr("id", "places")
+
+  // places
+  //   .selectAll(".places")
+  //   .data(features.filter((f) => f.properties.place !== undefined))
+  //   .enter()
+  //   .append("g")
+  //   .attr("id", (d) => d.id)
+  //   .attr("data-properties", (d) => JSON.stringify(filterProps(d.properties)))
+  //   .append("circle")
+  //   .attr("cx", (d) => projection(d.geometry.coordinates)[0])
+  //   .attr("cy", (d) => projection(d.geometry.coordinates)[1])
+  //   .attr("r", (d) => ATTR_MAP[d.properties.place])
+  //   .attr("fill", "#ffffff")
+  //   .attr("stroke-width", "1px")
+  //   .attr("stroke", "#000000")
 
   const serializer = new window.XMLSerializer()
   const string = serializer.serializeToString(svg.node())

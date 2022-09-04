@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import Map from "./Components/Map/Map"
 import TopBar from "./Components/TopBar/TopBar"
 import Footer from "./Components/Footer/Footer"
-import { to_valid_geojson, queryOverpass } from "./utils/api.js"
+import { toFeatureCollection, queryOverpass } from "./utils/api.js"
 
 import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
-import { featuresToSvg } from "./utils/svg"
+import { featureCollectionsToSvg } from "./utils/svg"
 import { useLocalStorage } from "./utils/hooks"
 
 export const App = ({ config }) => {
@@ -17,22 +17,17 @@ export const App = ({ config }) => {
   const [bounds, setBounds] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [features, setFeatures] = useState(null)
-  const [detail, setDetail] = useState(
-    Object.keys(config).reduce((prev, tag) => {
-      return { ...prev, [tag]: config[tag].defaultDetail }
+  const [featureCollections, setFeatureCollections] = useState(null)
+  const [updatedConfig, setUpdatedConfig] = useState(
+    Object.keys(config).reduce((prev, k) => {
+      const c = config[k]
+      return { ...prev, [k]: { ...c, _detail: c.defaultDetail } }
     }, {})
   )
 
-  // const reqObj = {
-  //   Roads: roadDetail,
-  //   Waterways: riverDetail,
-  //   Places: citiesDetail,
-  // }
-
   const handleRun = () => {
     setIsLoading(true)
-    if (Object.values(detail).every((v) => v === 0)) {
+    if (Object.values(updatedConfig).every((v) => v._detail === 0)) {
       setError("Query cannot be empty")
       setIsLoading(false)
       setTimeout(() => {
@@ -41,28 +36,32 @@ export const App = ({ config }) => {
       return
     }
     setError("")
-    const requestObj = Object.keys(config).reduce((prev, k) => {
-      const c = config[k]
-      const d = detail[k]
-      return { ...prev, [k]: { ...c, detail: d } }
-    }, {})
 
-    // queryOverpass(reqObj, bounds)
-    //   .then((res) => {
-    //     setFeatures(res.data.elements.map((el) => to_valid_geojson(el)))
-    //     setIsLoading(false)
-    //   })
-    //   .catch((reason) => {
-    //     console.log(reason)
-    //     setIsLoading(false)
-    //     setError("Something went wrong while fetching the data.")
-    //   })
+    queryOverpass(updatedConfig, bounds)
+      .then((res) => {
+        console.log(res.data.elements)
+        setFeatureCollections(
+          Object.keys(config).reduce((prev, k) => {
+            const c = config[k]
+            return {
+              ...prev,
+              [k]: toFeatureCollection(res.data.elements.filter(c.filter)),
+            }
+          }, {})
+        )
+        setIsLoading(false)
+      })
+      .catch((reason) => {
+        console.log(reason)
+        setIsLoading(false)
+        setError("Something went wrong while fetching the data.")
+      })
   }
   const handleDownload = () => {
     const a = document.createElement("a")
     a.style.display = "none"
 
-    const svg = featuresToSvg(features)
+    const svg = featureCollectionsToSvg(featureCollections)
 
     a.href = window.URL.createObjectURL(new Blob([svg], { type: "text/plain" }))
     a.setAttribute("download", "svg-zack.svg")
@@ -74,7 +73,11 @@ export const App = ({ config }) => {
 
   const handleMove = (bounds, center, zoom) => {
     setBounds(bounds)
-    setMapDefaults(JSON.stringify({ center: center, zoom: zoom }))
+
+    // protect when called explicitly before map moved
+    if (center && zoom) {
+      setMapDefaults(JSON.stringify({ center: center, zoom: zoom }))
+    }
   }
 
   const handleUpload = (fileArray) => {
@@ -98,14 +101,15 @@ export const App = ({ config }) => {
         onRun={handleRun}
         onDownload={handleDownload}
         isLoading={isLoading}
-        isDownloadable={Boolean(features)}
+        isDownloadable={Boolean(featureCollections)}
         onUpload={handleUpload}
       />
       <div className="mapContainer">
         <Map
           view={JSON.parse(mapDefaults)}
           onMove={handleMove}
-          features={features}
+          featureCollections={featureCollections}
+          config={updatedConfig}
         />
       </div>
       <div className="config-wrapper">
@@ -119,9 +123,8 @@ export const App = ({ config }) => {
           .
         </p>
         <ConfigureTab
-          config={config}
-          sliderVals={detail}
-          handleSlidersChanged={setDetail}
+          config={updatedConfig}
+          handleSlidersChanged={setUpdatedConfig}
           error={error}
         />
       </div>
