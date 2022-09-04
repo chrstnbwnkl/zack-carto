@@ -1,5 +1,14 @@
 const NONE_DISPLAY = "none"
 
+const STYLEMAP = {
+  color: "stroke",
+  fillOpacity: "fillOpacity",
+  weight: "strokeWidth",
+  radius: "r",
+  fillColor: "fill",
+  fill: "fill",
+}
+
 export class TagConfig {
   constructor({
     title,
@@ -54,6 +63,16 @@ export class TagConfig {
         }
       }
     }
+
+    this._d3Styles = this.leafletStyles.map((style, i) => {
+      return Object.keys(style).reduce(
+        (prev, k) => {
+          const opt = style[k]
+          return { ...prev, [STYLEMAP[k]]: opt }
+        },
+        { strokeLinecap: "round", fill: "none" }
+      )
+    })
   }
 }
 
