@@ -42,13 +42,11 @@ const Map = ({ view, onMove, featureCollections, config }) => {
       for (const k in config) {
         const c = config[k]
         const fc = featureCollections[k]
-        console.log(featureCollections)
         const opts = {}
         if (c.osmElement !== "node") {
           opts.style = c._leafletFunc
         } else {
           opts.pointToLayer = (feat, ll) => {
-            console.log(c._leafletFunc(feat))
             return L.circleMarker(ll, c._leafletFunc(feat))
           }
         }

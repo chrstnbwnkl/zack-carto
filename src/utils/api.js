@@ -39,7 +39,6 @@ const makeReqParams = (obj, boundParam) => {
 }
 
 export const toFeatureCollection = (json) => {
-  console.log(json)
   return {
     type: "FeatureCollection",
     features: json.map((el) => {

@@ -18,12 +18,7 @@ export const App = ({ config }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [featureCollections, setFeatureCollections] = useState(null)
-  const [updatedConfig, setUpdatedConfig] = useState(
-    Object.keys(config).reduce((prev, k) => {
-      const c = config[k]
-      return { ...prev, [k]: { ...c, _detail: c.defaultDetail } }
-    }, {})
-  )
+  const [updatedConfig, setUpdatedConfig] = useState(config)
 
   const handleRun = () => {
     setIsLoading(true)
@@ -39,7 +34,6 @@ export const App = ({ config }) => {
 
     queryOverpass(updatedConfig, bounds)
       .then((res) => {
-        console.log(res.data.elements)
         setFeatureCollections(
           Object.keys(config).reduce((prev, k) => {
             const c = config[k]
@@ -61,7 +55,11 @@ export const App = ({ config }) => {
     const a = document.createElement("a")
     a.style.display = "none"
 
-    const svg = featureCollectionsToSvg(featureCollections)
+    const svg = featureCollectionsToSvg(
+      featureCollections,
+      updatedConfig,
+      bounds
+    )
 
     a.href = window.URL.createObjectURL(new Blob([svg], { type: "text/plain" }))
     a.setAttribute("download", "svg-zack.svg")

@@ -11,6 +11,10 @@ export class TagConfig {
     leafletStyles,
     defaultDetail,
   }) {
+    if (values.length !== displayNames.length) {
+      throw new Error("values and displayNames arrays must be of same length")
+    }
+
     this._detail = defaultDetail
     this.title = title
     this.osmElement = osmElement
