@@ -31,7 +31,6 @@ label {
 
 .app {
   height: 100vh;
-
   display: grid;
   grid-template-columns: 150px 150px 1fr;
   grid-template-rows: 70px calc(100vh - 110px) 40px;
@@ -62,11 +61,8 @@ label {
     background-color: var(--head-foot-bg);
   }
 
-  > .mapContainer {
+  > #map {
     grid-area: map;
-    padding: var(--main-spacing);
-    overflow: auto;
-
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 1fr;
@@ -124,4 +120,25 @@ label {
   .headline > * > h1 {
     font-size: medium;
   }
+}
+
+#error {
+  position: absolute;
+  top: calc(70px + 2%);
+  left: 0;
+  width: 100%;
+  z-index: 9999999999;
+}
+
+.error-inner {
+  background-color: rgba(246, 68, 68, 0.736);
+  margin: 0 auto;
+  width: 15%;
+  border-radius: 4px;
+  color: white;
+  font-family: Helvetica, Arial, Sans-Serif;
+}
+
+.error-inner > p {
+  text-align: center;
 }

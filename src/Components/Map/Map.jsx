@@ -4,7 +4,7 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import "./Map.css"
 
-const Map = ({ view, onMove, featureCollections, config }) => {
+const Map = ({ view, onMove, featureCollections, config, error }) => {
   const [mapInstance, setMapInstance] = useState(null)
   const mapRef = useRef(null)
 
@@ -62,7 +62,18 @@ const Map = ({ view, onMove, featureCollections, config }) => {
       })
     }
   }, [featureCollections])
-  return <div id="map"></div>
+  return (
+    <>
+      <div id="map"></div>
+      {error && (
+        <div id="error">
+          <div className="error-inner">
+            <p>{error}</p>
+          </div>
+        </div>
+      )}
+    </>
+  )
 }
 
 export default Map

@@ -15,6 +15,7 @@ export const App = ({ config }) => {
     JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
   )
   const [bounds, setBounds] = useState(null)
+  const [runBounds, setRunBounds] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [featureCollections, setFeatureCollections] = useState(null)
@@ -22,6 +23,7 @@ export const App = ({ config }) => {
 
   const handleRun = () => {
     setIsLoading(true)
+    setRunBounds(bounds)
     if (Object.values(updatedConfig).every((v) => v._detail === 0)) {
       setError("Query cannot be empty")
       setIsLoading(false)
@@ -32,7 +34,7 @@ export const App = ({ config }) => {
     }
     setError("")
 
-    queryOverpass(updatedConfig, bounds)
+    queryOverpass(updatedConfig, runBounds)
       .then((res) => {
         setFeatureCollections(
           Object.keys(config).reduce((prev, k) => {
@@ -102,14 +104,13 @@ export const App = ({ config }) => {
         isDownloadable={Boolean(featureCollections)}
         onUpload={handleUpload}
       />
-      <div className="mapContainer">
-        <Map
-          view={JSON.parse(mapDefaults)}
-          onMove={handleMove}
-          featureCollections={featureCollections}
-          config={updatedConfig}
-        />
-      </div>
+      <Map
+        view={JSON.parse(mapDefaults)}
+        onMove={handleMove}
+        featureCollections={featureCollections}
+        config={updatedConfig}
+        error={"Error"}
+      />
       <div className="config-wrapper">
         <h3>Geodata to SVG within seconds</h3>
         <p>
