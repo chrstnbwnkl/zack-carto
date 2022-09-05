@@ -85,10 +85,23 @@ export const featureCollectionsToSvg = (fc, config, bounds) => {
                       }
                     })
                     .map((feat) => {
+                      const dataAttrs = Object.keys(feat.properties).reduce(
+                        (prev, propKey) => {
+                          return {
+                            ...prev,
+                            [`data-${propKey
+                              .replaceAll(":", "-")
+                              .replaceAll("_", "-")}`]:
+                              feat.properties[propKey],
+                          }
+                        },
+                        {}
+                      )
                       return (
                         <g
                           key={`${k}-${feat.properties.id}`}
                           id={feat.properties.id}
+                          {...dataAttrs}
                         >
                           {c.osmElement !== "node" ? (
                             <path d={path(feat)} {...c._d3Styles[i]}></path>
@@ -97,6 +110,7 @@ export const featureCollectionsToSvg = (fc, config, bounds) => {
                               cx={projection(feat.geometry.coordinates)[0]}
                               cy={projection(feat.geometry.coordinates)[1]}
                               {...c._d3Styles[i]}
+                              {...dataAttrs}
                             ></circle>
                           )}
                         </g>
