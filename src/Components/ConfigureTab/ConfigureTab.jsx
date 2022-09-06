@@ -4,8 +4,7 @@ import ConfigureItem from "../ConfigureItem/ConfigureItem"
 
 import "./ConfigureTab.css"
 
-const ConfigureTab = ({ config, handleSlidersChanged, error }) => {
-  const errorClsName = `error-message ${error ? "visible" : "hidden"}`
+const ConfigureTab = ({ config, handleSlidersChanged }) => {
   return (
     <>
       <div className="configure-item-wrapper">
@@ -24,9 +23,6 @@ const ConfigureTab = ({ config, handleSlidersChanged, error }) => {
             </div>
           )
         })}
-      </div>
-      <div className={errorClsName}>
-        <p>{error}</p>
       </div>
     </>
   )

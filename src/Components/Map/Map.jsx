@@ -8,6 +8,8 @@ const Map = ({ view, onMove, featureCollections, config, error }) => {
   const [mapInstance, setMapInstance] = useState(null)
   const mapRef = useRef(null)
 
+  const errorClsName = `error-wrapper ${error ? "visible" : "hidden"}`
+
   const handleMove = (e) => {
     const center = e.target.getCenter()
     const zoom = e.target.getZoom()
@@ -65,13 +67,11 @@ const Map = ({ view, onMove, featureCollections, config, error }) => {
   return (
     <>
       <div id="map"></div>
-      {error && (
-        <div id="error">
-          <div className="error-inner">
-            <p>{error}</p>
-          </div>
+      <div className={errorClsName}>
+        <div className="error-inner">
+          <p>{error}</p>
         </div>
-      )}
+      </div>
     </>
   )
 }

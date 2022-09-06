@@ -14,7 +14,6 @@ h2 {
   animation: fadein 1s;
 }
 
-p,
 label {
   font-family: Arial, Helvetica, Sans-Serif;
   animation: fadein 1s;
@@ -122,7 +121,7 @@ label {
   }
 }
 
-#error {
+.error-wrapper {
   position: absolute;
   top: calc(70px + 2%);
   left: 0;
@@ -137,6 +136,7 @@ label {
   border-radius: 4px;
   color: white;
   font-family: Helvetica, Arial, Sans-Serif;
+  padding: 3px;
 }
 
 .error-inner > p {

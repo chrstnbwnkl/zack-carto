@@ -109,7 +109,7 @@ export const App = ({ config }) => {
         onMove={handleMove}
         featureCollections={featureCollections}
         config={updatedConfig}
-        error={"Error"}
+        error={error}
       />
       <div className="config-wrapper">
         <h3>Geodata to SVG within seconds</h3>
@@ -124,7 +124,6 @@ export const App = ({ config }) => {
         <ConfigureTab
           config={updatedConfig}
           handleSlidersChanged={setUpdatedConfig}
-          error={error}
         />
       </div>
       <Footer />
