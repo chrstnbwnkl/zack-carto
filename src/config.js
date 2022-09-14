@@ -6,10 +6,10 @@ export const CONFIG = {
     osmElement: "way",
     tag: "highway",
     values: [
-      ["motorway", "trunk"],
-      "primary",
-      "secondary",
-      "tertiary",
+      ["motorway", "trunk", "motorway_link"],
+      ["primary", "primary_link"],
+      ["secondary", "secondary_link"],
+      ["tertiary", "tertiary_link"],
       ["residential", "service", "unclassified"],
     ],
     displayNames: [
