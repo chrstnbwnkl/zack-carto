@@ -13,7 +13,6 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
   const icon = isLoading ? faSpinner : faPlay
   const iconClassName = isLoading ? "spinner" : ""
   const dlBtnClassName = `btn-export ${isDownloadable ? "" : "greyed-out"}`
-  console.log(isDownloadable)
   return (
     <>
       <div className="control-wrapper">
@@ -40,7 +39,12 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
         <div className="headline">
           <div className="title-wrapper">
             <h1>
-              Zack&nbsp;⚡&nbsp;[<i>t͡sak</i>]
+              <a
+                href="https://github.com/chrstnbwnkl/zack-carto"
+                target="blank"
+              >
+                Zack&nbsp;⚡&nbsp;[<i>t͡sak</i>]
+              </a>
             </h1>
             <p>
               (from German, exclaimed when something needs to happen instantly)

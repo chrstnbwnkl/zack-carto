@@ -29,8 +29,7 @@ const UploadForm = ({ onUpload }) => {
       id="form-geojson-upload"
       className={`btn-upload ${dragActive ? "drag-active" : ""}`}
       onDragEnter={(e) => handleDrag(e)}
-      disabled={true}
-      title="Feature Coming Soon"
+      title="Drag and drop your own GeoJSON here"
     >
       <input type="file" id="input-geojson-upload" multiple={true} />
       <label id="label-geojson-upload" htmlFor="input-geojson-upload">

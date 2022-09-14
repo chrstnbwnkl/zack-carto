@@ -10,7 +10,7 @@ While geodata has become widely accessible, there remains a large group of profe
 
 But these constraints should not stand in the way of a beautiful map, and designers have a lot of skills needed to make meaningful and good looking maps. This is were _Zack_ comes in: it is a tool to quickly pull geodata from a local context that is usually not as easily available as e.g. country borders or the US states, and convert it to a format that every designer is comfortable with: SVG. Simply pan the map to the extent needed, adjust the sliders depending on which features you want to include and what level of detail you need, and voilá! Just click the export button and all features are downloaded as one SVG file. The big advantage: no need to manually align anything manually, all features within each file are georeferenced, so you can quickly start drafting.
 
-A live instance of this app runs [here](https://chrstnbwnkl.github.io/zack-carto/)
+A live instance of this app runs [here](https://chrstnbwnkl.github.io/zack-carto/).
 
 ## Set-up
 

@@ -1,27 +1,34 @@
 import React from "react"
-import { makeReadableEnumeration, QUERY_MAP } from "../../utils/queryMap"
+import { makeReadableEnumeration } from "../../utils/misc"
 
 import "./ConfigureItem.css"
 
-const ConfigureItem = ({ type, sliderVal, onSliderChange }) => {
-  const selectText = makeReadableEnumeration(
-    QUERY_MAP[type].text_repr,
-    sliderVal
-  )
+const ConfigureItem = ({ config, itemKey, sliderVal, onSliderChange }) => {
+  const selectText = makeReadableEnumeration(config.displayNames, sliderVal)
   return (
     <div className="configure-item">
       <div className="header">
         <p>
-          <b>{type}: </b>
+          <b>{config.title}: </b>
         </p>
       </div>
       <div className="slider">
         <input
           type="range"
           min={0}
-          max={QUERY_MAP[type].text_repr.length - 1}
+          max={config.values.length}
           value={sliderVal}
-          onChange={(e) => onSliderChange(Number(e.target.value))}
+          onChange={(e) =>
+            onSliderChange((current) => {
+              return {
+                ...current,
+                [itemKey]: {
+                  ...current[itemKey],
+                  _detail: Number(e.target.value),
+                },
+              }
+            })
+          }
         ></input>
       </div>
       <p>{selectText}</p>
