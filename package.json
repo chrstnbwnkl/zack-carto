@@ -1,6 +1,6 @@
 {
-  "name": "babel-tut",
-  "version": "1.0.0",
+  "name": "zack-carto",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^0.27.2",
     "d3-geo": "^3.0.1",
-    "d3-selection": "^3.0.0",
+    "d3-tile": "^1.0.0",
     "leaflet": "^1.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

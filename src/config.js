@@ -1,0 +1,86 @@
+import { TagConfig } from "./utils/osm"
+
+export const CONFIG = {
+  roads: new TagConfig({
+    title: "Roads",
+    osmElement: "way",
+    tag: "highway",
+    values: [
+      ["motorway", "trunk"],
+      "primary",
+      "secondary",
+      "tertiary",
+      ["residential", "service", "unclassified"],
+    ],
+    displayNames: [
+      "motorways",
+      "primary roads",
+      "secondary roads",
+      "tertiary roads",
+      "all roads",
+    ],
+    filter: (feat) => feat.tags["highway"] !== undefined,
+    leafletStyles: [
+      { color: "#000", weight: 4, fill: "none" },
+      { color: "#000", weight: 3, fill: "none" },
+      { color: "#555", weight: 3, fill: "none" },
+      { color: "#555", weight: 2, fill: "none" },
+      { color: "#555", weight: 1, fill: "none" },
+    ],
+    defaultDetail: 3,
+  }),
+  waterways: new TagConfig({
+    title: "Waterways",
+    osmElement: "way",
+    tag: "waterway",
+    values: ["river", "stream", "canal", ["drain", "ditch"]],
+    displayNames: ["rivers", "streams", "canals", "all waterways"],
+    filter: (feat) => feat.tags["waterway"] !== undefined,
+    leafletStyles: [
+      { color: "#4287f5", weight: 5 },
+      { color: "#4287f5", weight: 3 },
+      { color: "#4287f5", weight: 2 },
+      { color: "#4287f5", weight: 1 },
+    ],
+    defaultDetail: 2,
+  }),
+  places: new TagConfig({
+    title: "Places",
+    osmElement: "node",
+    tag: "place",
+    values: ["city", "town", "suburb", ["neighborhood", "village"]],
+    displayNames: ["cities", "towns", "suburbs", "all places"],
+    filter: (feat) => feat.tags["place"] !== undefined,
+    leafletStyles: [
+      {
+        radius: 8,
+        fillColor: "#fff",
+        color: "#000",
+        weight: 4,
+        fillOpacity: 0.7,
+      },
+      {
+        radius: 6,
+        fillColor: "#fff",
+        color: "#000",
+        weight: 3,
+        fillOpacity: 0.7,
+      },
+      {
+        radius: 5,
+        fillColor: "#fff",
+        color: "#000",
+        weight: 3,
+        fillOpacity: 0.7,
+      },
+      {
+        radius: 4,
+        fillColor: "#fff",
+        color: "#000",
+        weight: 2,
+        fillOpacity: 0.7,
+      },
+    ],
+    defaultDetail: 3,
+  }),
+}

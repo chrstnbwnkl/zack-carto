@@ -4,36 +4,25 @@ html {
   margin: 0;
   --main-spacing: 0px 0px 0px 0px;
   --header-footer-spacing: 0px 10px;
-  --head-foot-bg: rgb(128, 173, 156);
+  --head-foot-bg: rgb(148, 186, 171);
   overflow: hidden;
 }
 
 h1,
 h2 {
-  letter-spacing: 0.05em;
+  letter-spacing: 0em;
   animation: fadein 1s;
 }
 
-p,
 label {
   font-family: Arial, Helvetica, Sans-Serif;
   animation: fadein 1s;
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .app {
   height: 100vh;
-
   display: grid;
-  grid-template-columns: 10% 10% 1fr;
+  grid-template-columns: 150px 150px 1fr;
   grid-template-rows: 70px calc(100vh - 110px) 40px;
   grid-template-areas:
     "control control header"
@@ -62,11 +51,8 @@ label {
     background-color: var(--head-foot-bg);
   }
 
-  > .mapContainer {
+  > #map {
     grid-area: map;
-    padding: var(--main-spacing);
-    overflow: auto;
-
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 1fr;
@@ -83,9 +69,97 @@ label {
 
 .config-wrapper > h3 {
   text-align: center;
+  padding-right: 3px;
 }
 
 .config-wrapper > p {
   padding-left: 10px;
   padding-bottom: 10px;
+}
+
+@media (max-width: 1200px) {
+  .headline > * > p {
+    display: none;
+  }
+  .headline > * > h1 {
+    font-size: x-large;
+  }
+}
+
+@media (max-width: 800px) {
+  .app {
+    grid-template-columns: 70px 70px 1fr;
+  }
+  .config-wrapper > * {
+    font-size: small;
+  }
+
+  .control-wrapper > button,
+  .headline-wrapper > button,
+  .btn-upload {
+    padding: 0px;
+    font-size: x-small;
+  }
+
+  .slider {
+    position: relative;
+  }
+  input[type="range"] {
+    width: 100px;
+  }
+  .headline > * > h1 {
+    font-size: medium;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeError {
+  from {
+    opacity: 0;
+  }
+  to {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.error-wrapper {
+  position: absolute;
+  top: calc(70px + 2%);
+  left: 0;
+  width: 100%;
+  z-index: 9999999999;
+  transition: opacity 0.25s;
+}
+
+.error-inner {
+  background-color: rgba(246, 68, 68, 0.736);
+  margin: 0 auto;
+  width: 15%;
+  border-radius: 4px;
+  color: white;
+  font-family: Helvetica, Arial, Sans-Serif;
+  padding: 3px;
+}
+
+.error-inner > p {
+  text-align: center;
+}
+
+.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
 }
