@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import L from "leaflet"
 import Map from "./Components/Map/Map"
 import TopBar from "./Components/TopBar/TopBar"
 import Footer from "./Components/Footer/Footer"
@@ -6,7 +7,6 @@ import { toFeatureCollection, queryOverpass } from "./utils/api.js"
 
 import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
-import { featureCollectionsToSvg } from "./utils/svg"
 import { useLocalStorage } from "./utils/hooks"
 
 export const App = ({ config }) => {
@@ -19,13 +19,16 @@ export const App = ({ config }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [featureCollections, setFeatureCollections] = useState(null)
+  const [uploadedGeoJSON, setUploadedGeoJSON] = useState([])
   const [updatedConfig, setUpdatedConfig] = useState(config)
 
   const handleRun = () => {
     setIsLoading(true)
     setRunBounds(bounds)
     if (Object.values(updatedConfig).every((v) => v._detail === 0)) {
-      setError("Query cannot be empty")
+      setError(
+        "Query cannot be empty: please increase at least one of the sliders."
+      )
       setIsLoading(false)
       setTimeout(() => {
         setError("")
@@ -34,7 +37,7 @@ export const App = ({ config }) => {
     }
     setError("")
 
-    queryOverpass(updatedConfig, runBounds)
+    queryOverpass(updatedConfig, bounds)
       .then((res) => {
         setFeatureCollections(
           Object.keys(config).reduce((prev, k) => {
@@ -57,18 +60,26 @@ export const App = ({ config }) => {
     const a = document.createElement("a")
     a.style.display = "none"
 
-    const svg = featureCollectionsToSvg(
-      featureCollections,
-      updatedConfig,
-      bounds
-    )
+    const w = new Worker(new URL("./workers/prepareSVG.jsx", import.meta.url))
+    const data = {
+      fc: featureCollections,
+      uploadedGeoJSON,
+      config: JSON.stringify(updatedConfig),
+      bounds: L.rectangle(runBounds).toGeoJSON(),
+    }
+    console.log(data)
+    w.postMessage(data)
 
-    a.href = window.URL.createObjectURL(new Blob([svg], { type: "text/plain" }))
-    a.setAttribute("download", "svg-zack.svg")
+    w.onmessage = (svg) => {
+      a.href = window.URL.createObjectURL(
+        new Blob([svg.data], { type: "text/plain" })
+      )
+      a.setAttribute("download", "zack-download.svg")
 
-    a.click()
+      a.click()
 
-    window.URL.revokeObjectURL(a.href)
+      window.URL.revokeObjectURL(a.href)
+    }
   }
 
   const handleMove = (bounds, center, zoom) => {
@@ -92,7 +103,14 @@ export const App = ({ config }) => {
       })
     })
     Promise.all(promises).then((geojsonStrs) => {
-      geojsonStrs.map(console.log) // TODO: attach _foreign attr and handle in map and svg
+      setUploadedGeoJSON((current) => {
+        return [
+          ...current,
+          ...geojsonStrs.reduce((prev, str) => {
+            return [...prev, JSON.parse(str)]
+          }, []),
+        ]
+      })
     })
   }
   return (
@@ -108,6 +126,7 @@ export const App = ({ config }) => {
         view={JSON.parse(mapDefaults)}
         onMove={handleMove}
         featureCollections={featureCollections}
+        uploadedGeoJSON={uploadedGeoJSON}
         config={updatedConfig}
         error={error}
       />

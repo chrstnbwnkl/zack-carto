@@ -4,7 +4,7 @@ html {
   margin: 0;
   --main-spacing: 0px 0px 0px 0px;
   --header-footer-spacing: 0px 10px;
-  --head-foot-bg: rgb(128, 173, 156);
+  --head-foot-bg: rgb(148, 186, 171);
   overflow: hidden;
 }
 
@@ -17,15 +17,6 @@ h2 {
 label {
   font-family: Arial, Helvetica, Sans-Serif;
   animation: fadein 1s;
-}
-
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .app {
@@ -121,12 +112,32 @@ label {
   }
 }
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeError {
+  from {
+    opacity: 0;
+  }
+  to {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
 .error-wrapper {
   position: absolute;
   top: calc(70px + 2%);
   left: 0;
   width: 100%;
   z-index: 9999999999;
+  transition: opacity 0.25s;
 }
 
 .error-inner {
@@ -141,4 +152,14 @@ label {
 
 .error-inner > p {
   text-align: center;
+}
+
+.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
 }

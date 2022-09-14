@@ -1,24 +1,20 @@
 import React from "react"
-import L from "leaflet"
 import * as ReactDOMServer from "react-dom/server"
 import * as d3Geo from "d3-geo"
-import * as d3Selection from "d3-selection"
 import * as d3Tile from "d3-tile"
 
-const d3 = { ...d3Geo, ...d3Selection, ...d3Tile }
+const d3 = { ...d3Geo, ...d3Tile }
 
 const tileUrl = (x, y, z) => {
   return `https://tile.openstreetmap.org/${z}/${x}/${y}.png`
 }
 
-export const featureCollectionsToSvg = (fc, config, bounds) => {
-  const mergedFC = {
-    // need to merge to fit extent
-    type: "FeatureCollection",
-    features: Object.values(fc).reduce((prev, v) => {
-      return [...prev, ...v.features]
-    }, []),
-  }
+export const featureCollectionsToSvg = ({
+  fc,
+  uploadedGeoJSON,
+  config,
+  bounds,
+}) => {
   const [width, height, buffer] = [1000, 700, 40] // TODO: bounds to aspect ratio
 
   const projection = d3.geoMercator().fitExtent(
@@ -26,8 +22,7 @@ export const featureCollectionsToSvg = (fc, config, bounds) => {
       [buffer, buffer],
       [width - buffer, height - buffer],
     ],
-    L.rectangle(bounds).toGeoJSON()
-    //mergedFC
+    bounds
   )
 
   const path = d3.geoPath(projection)
@@ -37,7 +32,7 @@ export const featureCollectionsToSvg = (fc, config, bounds) => {
     .size([width, height])
     .scale(projection.scale() * 2 * Math.PI)
     .translate(projection([0, 0]))
-    .tileSize(512)
+    .tileSize(256)
 
   const svg = (
     <svg
@@ -68,6 +63,54 @@ export const featureCollectionsToSvg = (fc, config, bounds) => {
               ></image>
             )
           })}
+      </g>
+      <g id="uploaded-geojson">
+        {uploadedGeoJSON.map((uploadedFC, ix) => {
+          return (
+            <g key={ix}>
+              {uploadedFC.features.map((uploadedFeat, fix) => {
+                const dataAttrs = Object.keys(uploadedFeat.properties).reduce(
+                  (prev, propKey) => {
+                    return {
+                      ...prev,
+                      [`data-${propKey
+                        .replaceAll(":", "-")
+                        .replaceAll("_", "-")}`]:
+                        uploadedFeat.properties[propKey],
+                    }
+                  },
+                  {}
+                )
+                return (
+                  <g key={`${fix}`} {...dataAttrs}>
+                    {uploadedFeat.geometry.type !== "Point" ? (
+                      <path
+                        d={path(uploadedFeat)}
+                        {...{
+                          stroke: "#87784e",
+                          strokeWidth: 2,
+                          fill: "none",
+                          strokeLinecap: "round",
+                        }}
+                      ></path>
+                    ) : (
+                      <circle
+                        cx={projection(uploadedFeat.geometry.coordinates)[0]}
+                        cy={projection(uploadedFeat.geometry.coordinates)[1]}
+                        r={3}
+                        fill={"#000"}
+                        stroke={"#87784e"}
+                        fillOpacity={0.4}
+                        strokeWidth={2}
+                        {...dataAttrs}
+                      ></circle>
+                    )}
+                  </g>
+                )
+              })}
+            </g>
+          )
+        })}
       </g>
       {Object.keys(fc).map((k) => {
         const c = config[k]
@@ -126,4 +169,14 @@ export const featureCollectionsToSvg = (fc, config, bounds) => {
   )
 
   return ReactDOMServer.renderToStaticMarkup(svg)
+}
+
+onmessage = (e) => {
+  const svg = featureCollectionsToSvg({
+    fc: e.data.fc,
+    uploadedGeoJSON: e.data.uploadedGeoJSON,
+    config: JSON.parse(e.data.config),
+    bounds: e.data.bounds,
+  })
+  postMessage(svg)
 }

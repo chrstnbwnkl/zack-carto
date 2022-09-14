@@ -4,7 +4,14 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import "./Map.css"
 
-const Map = ({ view, onMove, featureCollections, config, error }) => {
+const Map = ({
+  view,
+  onMove,
+  featureCollections,
+  uploadedGeoJSON,
+  config,
+  error,
+}) => {
   const [mapInstance, setMapInstance] = useState(null)
   const mapRef = useRef(null)
 
@@ -21,7 +28,6 @@ const Map = ({ view, onMove, featureCollections, config, error }) => {
       center: view.center,
       zoom: view.zoom,
       renderer: L.canvas(),
-      minZoom: 10,
     })
     const osm = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -56,6 +62,7 @@ const Map = ({ view, onMove, featureCollections, config, error }) => {
         layers.push(geoJSON)
       }
     }
+
     return () => {
       layers.forEach((layer) => {
         if (typeof layer.remove === "function") {
@@ -64,6 +71,30 @@ const Map = ({ view, onMove, featureCollections, config, error }) => {
       })
     }
   }, [featureCollections])
+
+  useEffect(() => {
+    const layers = []
+    uploadedGeoJSON.forEach((geoJSON) => {
+      let opts = {}
+      if (geoJSON.features[0].geometry.type === "Point") {
+        opts.pointToLayer = (feat, ll) => {
+          return L.circleMarker(ll)
+        }
+      }
+      const layer = L.geoJSON(geoJSON, opts).addTo(mapInstance)
+      layers.push(layer)
+      console.log("layer added")
+    })
+
+    return () => {
+      layers.forEach((layer) => {
+        if (typeof layer.remove === "function") {
+          layer.remove()
+        }
+      })
+    }
+  }, [uploadedGeoJSON])
+
   return (
     <>
       <div id="map"></div>
