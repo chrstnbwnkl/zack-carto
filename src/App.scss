@@ -6,6 +6,7 @@ html {
   --header-footer-spacing: 0px 10px;
   --head-foot-bg: rgb(148, 186, 171);
   overflow: hidden;
+  font-family: Verdana, sans-serif;
 }
 
 h1,
@@ -15,7 +16,6 @@ h2 {
 }
 
 label {
-  font-family: Arial, Helvetica, Sans-Serif;
   animation: fadein 1s;
 }
 
