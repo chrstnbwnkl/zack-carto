@@ -5,7 +5,7 @@ const OVERPASS_URL = "https://lz4.overpass-api.de/api/interpreter"
 export const queryOverpass = (reqObj, bounds) => {
   const boundsParam = boundsToParam(bounds)
   const reqStr = makeReqParams(reqObj, boundsParam)
-  const url = `${OVERPASS_URL}?data=[out:json][timeout:25];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`
+  const url = `${OVERPASS_URL}?data=[out:json][timeout:60];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`
   console.log(url)
   return axios.get(url)
 }
