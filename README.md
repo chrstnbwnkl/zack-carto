@@ -1,43 +1,46 @@
-<h1 align="center">ZACK⚡</h1>
+# Getting Started with Create React App
 
-<p align="center"><b>Zack [<i>t͡sak</i>]</b> (from German: exclaimed when something needs to happen instantly): quick &amp; easy geodata from OpenStreetMap for graphic designers</p>
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-<hr>
+## Available Scripts
 
-## About
+In the project directory, you can run:
 
-While geodata has become widely accessible, there remains a large group of professionals who are left out of the loop: _graphic designers in need of a map_. And I don't mean a cartographic masterpiece, rather a simple map for use in film or print. In these situations, a map is simply the least concern for the designer. There's no time for learning about GeoJSON, ~~[shapefile](http://switchfromshapefile.org)~~ or [projections](https://observablehq.com/@fil/synchronized-projections), nor for figuring out where to even find the data in the first place.
+### `npm start`
 
-But these constraints should not stand in the way of a beautiful map, and designers have a lot of skills needed to make meaningful and good looking maps. This is were _Zack_ comes in: it is a tool to quickly pull geodata from a local context that is usually not as easily available as e.g. country borders or the US states, and convert it to a format that every designer is comfortable with: SVG. Simply pan the map to the extent needed, adjust the sliders depending on which features you want to include and what level of detail you need, and voilá! Just click the export button and all features are downloaded as one SVG file. The big advantage: no need to align anything manually, all features within each file are georeferenced, so you can quickly start drafting. Additionally, drag & drop your own GeoJSON files to include them in the output. Your geodata will be __completely handled in the browser__, nothing will be sent to any servers.  
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-A live instance of this app runs [here](https://chrstnbwnkl.github.io/zack-carto/).
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-## Set-up
+### `npm test`
 
-The app runs entirely in the browser. It is based on React, and for geodata retrieval, it calls a public [Overpass](https://wiki.openstreetmap.org/wiki/Overpass_API) instance. [D3 Geo](https://github.com/d3/d3-geo) is used to render the features in SVG.
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Install
+### `npm run build`
 
-```sh
-git clone git@github.com:chrstnbwnkl/zack-carto.git
-cd zack-carto
-npm install
-```
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Develop
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-This project uses `webpack-dev-server`, you can spin it up with
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-```sh
-npm run start
-```
+### `npm run eject`
 
-### Build
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-```
-npm run build
-```
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-## Contributing
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-Found a bug or have an idea for a new feature? I'd love to get feedback on this, whether it's an issue or a pull request!
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
