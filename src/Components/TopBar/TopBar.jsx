@@ -6,6 +6,8 @@ import {
   faDownload,
 } from "@fortawesome/free-solid-svg-icons"
 
+import { ReactComponent as Lightning } from "../../assets/img/twemoji-26a1.svg"
+
 import "./TopBar.css"
 import UploadForm from "../UploadForm/UploadForm"
 
@@ -43,7 +45,17 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
                 href="https://github.com/chrstnbwnkl/zack-carto"
                 target="blank"
               >
-                Zack&nbsp;⚡&nbsp;[<i>t͡sak</i>]
+                Zack&nbsp;
+                <span>
+                  <Lightning
+                    style={{
+                      height: "1em",
+                      position: "relative",
+                      top: "0.2em",
+                    }}
+                  />
+                </span>
+                &nbsp;[<i>t͡sak</i>]
               </a>
             </h1>
             <p>
