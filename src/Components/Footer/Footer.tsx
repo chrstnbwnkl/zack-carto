@@ -1,14 +1,14 @@
-import React from "react"
+import React, { ReactElement } from "react"
 
 import "./Footer.css"
 
-const Footer = (props) => {
+const Footer = (): ReactElement => {
   return (
     <footer>
       <div className="copyright">
         <p>
           © <a href="https://github.com/chrstnbwnkl">Christian Beiwinkel</a>{" "}
-          2022
+          {new Date().getFullYear()}
         </p>
       </div>
     </footer>
