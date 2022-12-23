@@ -1,31 +1,50 @@
-import React, { useState } from "react"
-import L from "leaflet"
+import React, { ReactElement, useState } from "react"
+import L, { LatLngBounds } from "leaflet"
 import Map from "./Components/Map/Map"
-import TopBar from "./Components/TopBar/TopBar"
+import Header from "./Components/Header/Header"
 import Footer from "./Components/Footer/Footer"
-import { toFeatureCollection, queryOverpass } from "./utils/api.js"
+import { toFeatureCollection, queryOverpass } from "./utils/api"
+import { FeatureCollection } from "geojson"
 
 import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab"
 import { useLocalStorage } from "./utils/hooks"
+import { OSMTags, ZackConfig } from "./config"
 
-export const App = ({ config }) => {
+interface AppProps {
+  config: ZackConfig
+}
+export const App = ({ config }: AppProps): ReactElement => {
   const [mapDefaults, setMapDefaults] = useLocalStorage(
     "mapstate",
     JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
   )
-  const [bounds, setBounds] = useState(null)
-  const [runBounds, setRunBounds] = useState(null)
+  const [bounds, setBounds] = useState(new LatLngBounds([0, 0], [0, 0]))
+  const [runBounds, setRunBounds] = useState(new LatLngBounds([0, 0], [0, 0]))
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [featureCollections, setFeatureCollections] = useState(null)
-  const [uploadedGeoJSON, setUploadedGeoJSON] = useState([])
+  const [featureCollections, setFeatureCollections] = useState({})
+  const [uploadedGeoJSON, setUploadedGeoJSON] = useState<FeatureCollection[]>(
+    []
+  )
   const [updatedConfig, setUpdatedConfig] = useState(config)
+
+  const onDetailUpdate = (itemKey: OSMTags, detail: string): void => {
+    setUpdatedConfig((current: ZackConfig) => {
+      return {
+        ...current,
+        [itemKey]: {
+          ...current[itemKey],
+          _detail: Number(detail),
+        },
+      }
+    })
+  }
 
   const handleRun = () => {
     setIsLoading(true)
     setRunBounds(bounds)
-    if (Object.values(updatedConfig).every((v) => v._detail === 0)) {
+    if (Object.values(updatedConfig).every((v) => v.detail === 0)) {
       setError(
         "Query cannot be empty: please increase at least one of the sliders."
       )
@@ -39,15 +58,16 @@ export const App = ({ config }) => {
 
     queryOverpass(updatedConfig, bounds)
       .then((res) => {
-        setFeatureCollections(
-          Object.keys(config).reduce((prev, k) => {
+        setFeatureCollections((current) => {
+          console.log("setting fc")
+          return (Object.keys(config) as OSMTags[]).reduce((prev, k) => {
             const c = config[k]
             return {
               ...prev,
               [k]: toFeatureCollection(res.data.elements.filter(c.filter)),
             }
           }, {})
-        )
+        })
         setIsLoading(false)
       })
       .catch((reason) => {
@@ -67,7 +87,6 @@ export const App = ({ config }) => {
       config: JSON.stringify(updatedConfig),
       bounds: L.rectangle(runBounds).toGeoJSON(),
     }
-    console.log(data)
     w.postMessage(data)
 
     w.onmessage = (svg) => {
@@ -82,7 +101,11 @@ export const App = ({ config }) => {
     }
   }
 
-  const handleMove = (bounds, center, zoom) => {
+  const handleMove = (
+    bounds: LatLngBounds,
+    center?: [number, number],
+    zoom?: number
+  ) => {
     setBounds(bounds)
 
     // protect when called explicitly before map moved
@@ -91,31 +114,32 @@ export const App = ({ config }) => {
     }
   }
 
-  const handleUpload = (fileArray) => {
+  const handleUpload = (fileArray: FileList) => {
     const promises = Array.prototype.map.call(fileArray, (file) => {
       return new Promise((resolve, reject) => {
         file
           .text()
-          .then((geojsonStr) => {
+          .then((geojsonStr: string) => {
             resolve(geojsonStr)
           })
-          .catch((err) => reject(err))
+          .catch(() => reject())
       })
     })
     Promise.all(promises).then((geojsonStrs) => {
-      setUploadedGeoJSON((current) => {
-        return [
-          ...current,
-          ...geojsonStrs.reduce((prev, str) => {
+      setUploadedGeoJSON((current: FeatureCollection[]) => {
+        const featureCollections = (geojsonStrs as string[]).reduce(
+          (prev: FeatureCollection[], str: string) => {
             return [...prev, JSON.parse(str)]
-          }, []),
-        ]
+          },
+          []
+        )
+        return [...current, ...featureCollections]
       })
     })
   }
   return (
     <div className="app">
-      <TopBar
+      <Header
         onRun={handleRun}
         onDownload={handleDownload}
         isLoading={isLoading}
@@ -142,7 +166,7 @@ export const App = ({ config }) => {
         </p>
         <ConfigureTab
           config={updatedConfig}
-          handleSlidersChanged={setUpdatedConfig}
+          handleSlidersChanged={onDetailUpdate}
         />
       </div>
       <Footer />

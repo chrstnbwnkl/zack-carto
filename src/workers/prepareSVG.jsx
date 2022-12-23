@@ -9,6 +9,15 @@ const tileUrl = (x, y, z) => {
   return `https://tile.openstreetmap.org/${z}/${x}/${y}.png`
 }
 
+const cleanProperties = (s) => {
+  return s
+    .replaceAll(":", "-")
+    .replaceAll("_", "-")
+    .replaceAll("@", "")
+    .replaceAll("~", "")
+    .toLocaleLowerCase()
+}
+
 export const featureCollectionsToSvg = ({
   fc,
   uploadedGeoJSON,
@@ -73,10 +82,9 @@ export const featureCollectionsToSvg = ({
                   (prev, propKey) => {
                     return {
                       ...prev,
-                      [`data-${propKey
-                        .replaceAll(":", "-")
-                        .replaceAll("_", "-")}`]:
-                        uploadedFeat.properties[propKey],
+                      [`data-${cleanProperties(propKey)}`]: cleanProperties(
+                        uploadedFeat.properties[propKey]
+                      ),
                     }
                   },
                   {}
@@ -102,7 +110,6 @@ export const featureCollectionsToSvg = ({
                         stroke={"#87784e"}
                         fillOpacity={0.4}
                         strokeWidth={2}
-                        {...dataAttrs}
                       ></circle>
                     )}
                   </g>
@@ -132,10 +139,8 @@ export const featureCollectionsToSvg = ({
                         (prev, propKey) => {
                           return {
                             ...prev,
-                            [`data-${propKey
-                              .replaceAll(":", "-")
-                              .replaceAll("_", "-")}`]:
-                              feat.properties[propKey],
+                            [`data-${cleanProperties(propKey)}`]:
+                              cleanProperties(feat.properties[propKey]),
                           }
                         },
                         {}
@@ -147,13 +152,12 @@ export const featureCollectionsToSvg = ({
                           {...dataAttrs}
                         >
                           {c.osmElement !== "node" ? (
-                            <path d={path(feat)} {...c._d3Styles[i]}></path>
+                            <path d={path(feat)} {...c.d3Styles[i]}></path>
                           ) : (
                             <circle
                               cx={projection(feat.geometry.coordinates)[0]}
                               cy={projection(feat.geometry.coordinates)[1]}
-                              {...c._d3Styles[i]}
-                              {...dataAttrs}
+                              {...c.d3Styles[i]}
                             ></circle>
                           )}
                         </g>

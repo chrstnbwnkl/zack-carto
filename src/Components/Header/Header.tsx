@@ -1,4 +1,4 @@
-import React from "react"
+import React, { ReactElement } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faPlay,
@@ -8,10 +8,24 @@ import {
 
 import { ReactComponent as Lightning } from "../../assets/img/twemoji-26a1.svg"
 
-import "./TopBar.css"
+import "./Header.css"
 import UploadForm from "../UploadForm/UploadForm"
 
-const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
+interface HeaderProps {
+  onRun: () => void
+  onDownload: () => void
+  isLoading: boolean
+  onUpload: (fileList: FileList) => void
+  isDownloadable: boolean
+}
+
+const Header = ({
+  onRun,
+  onDownload,
+  isLoading,
+  isDownloadable,
+  onUpload,
+}: HeaderProps): ReactElement => {
   const icon = isLoading ? faSpinner : faPlay
   const iconClassName = isLoading ? "spinner" : ""
   const dlBtnClassName = `btn-export ${isDownloadable ? "" : "greyed-out"}`
@@ -69,4 +83,4 @@ const TopBar = ({ onRun, onDownload, isLoading, isDownloadable, onUpload }) => {
   )
 }
 
-export default TopBar
+export default Header

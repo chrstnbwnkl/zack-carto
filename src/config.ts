@@ -1,6 +1,13 @@
+import { OverpassFeatureLike } from "./utils/api"
 import { TagConfig } from "./utils/osm"
 
-export const CONFIG = {
+export type OSMTags = "roads" | "waterways" | "places"
+
+export type ZackConfig = {
+  [k in OSMTags]: TagConfig
+}
+
+export const CONFIG: ZackConfig = {
   roads: new TagConfig({
     title: "Roads",
     osmElement: "way",
@@ -19,13 +26,13 @@ export const CONFIG = {
       "tertiary roads",
       "all roads",
     ],
-    filter: (feat) => feat.tags["highway"] !== undefined,
+    filter: (feat: OverpassFeatureLike) => feat.tags["highway"] !== undefined,
     leafletStyles: [
-      { color: "#000", weight: 4, fill: "none" },
-      { color: "#000", weight: 3, fill: "none" },
-      { color: "#555", weight: 3, fill: "none" },
-      { color: "#555", weight: 2, fill: "none" },
-      { color: "#555", weight: 1, fill: "none" },
+      { color: "#000", weight: 4, fill: false },
+      { color: "#000", weight: 3, fill: false },
+      { color: "#555", weight: 3, fill: false },
+      { color: "#555", weight: 2, fill: false },
+      { color: "#555", weight: 1, fill: false },
     ],
     defaultDetail: 3,
   }),
@@ -35,7 +42,7 @@ export const CONFIG = {
     tag: "waterway",
     values: ["river", "stream", "canal", ["drain", "ditch"]],
     displayNames: ["rivers", "streams", "canals", "all waterways"],
-    filter: (feat) => feat.tags["waterway"] !== undefined,
+    filter: (feat: OverpassFeatureLike) => feat.tags["waterway"] !== undefined,
     leafletStyles: [
       { color: "#4287f5", weight: 5 },
       { color: "#4287f5", weight: 3 },
@@ -50,7 +57,7 @@ export const CONFIG = {
     tag: "place",
     values: ["city", "town", "suburb", ["neighborhood", "village"]],
     displayNames: ["cities", "towns", "suburbs", "all places"],
-    filter: (feat) => feat.tags["place"] !== undefined,
+    filter: (feat: OverpassFeatureLike) => feat.tags["place"] !== undefined,
     leafletStyles: [
       {
         radius: 8,

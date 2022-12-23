@@ -1,9 +1,25 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, ReactElement } from "react"
 import L from "leaflet"
+import { FeatureCollection } from "geojson"
 
 import "leaflet/dist/leaflet.css"
 import "./Map.css"
+import { ZackConfig } from "../../config"
 
+interface MapProps {
+  view: { center: [number, number]; zoom: number }
+  onMove: (
+    bounds: L.LatLngBounds,
+    center?: [number, number],
+    zoom?: number
+  ) => void
+  featureCollections: {
+    [k: string]: FeatureCollection
+  }
+  uploadedGeoJSON: FeatureCollection[]
+  config: ZackConfig
+  error: string
+}
 const Map = ({
   view,
   onMove,
@@ -11,13 +27,13 @@ const Map = ({
   uploadedGeoJSON,
   config,
   error,
-}) => {
-  const [mapInstance, setMapInstance] = useState(null)
-  const mapRef = useRef(null)
+}: MapProps): ReactElement => {
+  const [mapInstance, setMapInstance] = useState<null | L.Map>(null)
+  const mapRef = useRef<null | L.Map>(null)
 
   const errorClsName = `error-wrapper ${error ? "visible" : "hidden"}`
 
-  const handleMove = (e) => {
+  const handleMove = (e: L.LeafletEvent) => {
     const center = e.target.getCenter()
     const zoom = e.target.getZoom()
     onMove(e.target.getBounds(), [center.lat, center.lng], zoom)
@@ -37,28 +53,36 @@ const Map = ({
       }
     )
     osm.addTo(mapRef.current)
-    setMapInstance(mapRef.current)
+    setMapInstance(mapRef.current as L.Map)
     onMove(mapRef.current.getBounds())
     mapRef.current.on("move", (e) => {
       handleMove(e)
     })
+
+    return () => {
+      ;(mapRef.current as L.Map).remove()
+    }
   }, []) // only render once
 
   useEffect(() => {
-    const layers = []
-    if (featureCollections) {
-      for (const k in config) {
+    console.log("fc changed in map component")
+    console.log(featureCollections)
+    console.log(mapRef.current)
+    const layers: L.Layer[] = []
+    if (Object.keys(featureCollections).length > 0) {
+      let k: keyof ZackConfig
+      for (k in config) {
         const c = config[k]
         const fc = featureCollections[k]
-        const opts = {}
+        const opts: L.GeoJSONOptions = {}
         if (c.osmElement !== "node") {
-          opts.style = c._leafletFunc
+          opts.style = c.leafletFunc()
         } else {
           opts.pointToLayer = (feat, ll) => {
-            return L.circleMarker(ll, c._leafletFunc(feat))
+            return L.circleMarker(ll, c.leafletFunc()(feat))
           }
         }
-        const geoJSON = L.geoJSON(fc, opts).addTo(mapInstance)
+        const geoJSON = L.geoJSON(fc, opts).addTo(mapInstance as L.Map)
         layers.push(geoJSON)
       }
     }
@@ -70,18 +94,18 @@ const Map = ({
         }
       })
     }
-  }, [featureCollections])
+  }, [featureCollections, mapInstance])
 
   useEffect(() => {
-    const layers = []
+    const layers: L.GeoJSON[] = []
     uploadedGeoJSON.forEach((geoJSON) => {
-      let opts = {}
+      let opts: L.GeoJSONOptions = {}
       if (geoJSON.features[0].geometry.type === "Point") {
         opts.pointToLayer = (feat, ll) => {
           return L.circleMarker(ll)
         }
       }
-      const layer = L.geoJSON(geoJSON, opts).addTo(mapInstance)
+      const layer = L.geoJSON(geoJSON, opts).addTo(mapInstance as L.Map)
       layers.push(layer)
       console.log("layer added")
     })

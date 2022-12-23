@@ -1,11 +1,14 @@
-import React from "react"
+import React, { ReactElement } from "react"
 
 import "./UploadForm.css"
 
-const UploadForm = ({ onUpload }) => {
+interface UploadFormProps {
+  onUpload: (fileList: FileList) => void
+}
+const UploadForm = ({ onUpload }: UploadFormProps): ReactElement => {
   const [dragActive, setDragActive] = React.useState(false)
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: React.DragEvent<HTMLFormElement | HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -15,7 +18,7 @@ const UploadForm = ({ onUpload }) => {
     }
   }
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
