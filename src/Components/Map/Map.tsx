@@ -76,7 +76,8 @@ const Map = ({
         const fc = featureCollections[k]
         const opts: L.GeoJSONOptions = {}
         if (c.osmElement !== "node") {
-          opts.style = c.leafletFunc()
+          const styleFunc = c.leafletFunc()
+          opts.style = styleFunc
         } else {
           opts.pointToLayer = (feat, ll) => {
             return L.circleMarker(ll, c.leafletFunc()(feat))

@@ -58,6 +58,7 @@ export class TagConfig {
   public detail: number
   public queryParams: (string | string[])[]
   public d3Styles: SVGOpts[]
+  public leafletFunc: () => StyleFunction
 
   constructor(opts: TagConfigOpts) {
     const {
@@ -111,27 +112,27 @@ export class TagConfig {
         { strokeLinecap: "round", fill: "none" }
       )
     })
-  }
 
-  leafletFunc(): StyleFunction {
-    return (feat?: Feature) => {
-      let style: CircleMarkerOptions = {}
-      for (let i = 0; i < this.values.length; i++) {
-        const val = this.values[i]
-        if (
-          !Array.isArray(val) &&
-          feat?.properties![this.tag] === this.values[i]
-        ) {
-          style = this.leafletStyles[i]
-        } else {
-          for (const nested of val) {
-            if (feat?.properties![this.tag] === nested) {
-              style = this.leafletStyles[i]
+    this.leafletFunc = (): StyleFunction => {
+      return (feat?: Feature) => {
+        let style: CircleMarkerOptions = {}
+        for (let i = 0; i < this.values.length; i++) {
+          const val = this.values[i]
+          if (
+            !Array.isArray(val) &&
+            feat?.properties![this.tag] === this.values[i]
+          ) {
+            style = this.leafletStyles[i]
+          } else {
+            for (const nested of val) {
+              if (feat?.properties![this.tag] === nested) {
+                style = this.leafletStyles[i]
+              }
             }
           }
         }
+        return style
       }
-      return style
     }
   }
 }

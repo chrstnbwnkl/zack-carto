@@ -35,7 +35,7 @@ export const App = ({ config }: AppProps): ReactElement => {
         ...current,
         [itemKey]: {
           ...current[itemKey],
-          _detail: Number(detail),
+          detail: Number(detail),
         },
       }
     })
