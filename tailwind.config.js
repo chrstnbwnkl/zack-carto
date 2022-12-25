@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      zIndex: {
+        1000: "1000",
+      },
+    },
     screens: {
       xl: { max: "1279px" },
       // => @media (max-width: 1279px) { ... }

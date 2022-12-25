@@ -29,8 +29,8 @@ const MainContent = ({
   onDetailUpdate,
 }: MainContentProps) => {
   return (
-    <div className="flex flex-grow md:flex-col">
-      <div className="w-4/12 md:order-2 md:h-4/6 md:w-full md:overflow-y-scroll">
+    <div className="flex min-h-0 w-screen flex-1 md:flex-col">
+      <div className="w-4/12 overflow-y-auto md:order-2 md:h-4/6 md:w-full">
         <h3 className="p-3 text-xl font-bold">Geodata to SVG within seconds</h3>
         <p className="p-3">
           Pick a level of detail for each category, run the query, and download

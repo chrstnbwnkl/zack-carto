@@ -30,7 +30,7 @@ const Header = ({
   const iconClassName = isLoading ? "animate-spin" : "";
 
   return (
-    <header className="flex h-24 flex-row content-center justify-between space-x-1 bg-blue-50">
+    <header className="flex h-24 w-full flex-row content-center justify-between space-x-1 border-b border-blue-90 bg-blue-50">
       <div className="flex flex-1 flex-row justify-evenly self-center first:mr-auto last:ml-auto lg:p-2">
         <button
           className={`relative m-1 h-full w-20 rounded-md border-2 border-green bg-white p-2 shadow-white drop-shadow-md transition-colors hover:bg-green md:w-12`}
@@ -45,8 +45,10 @@ const Header = ({
           />
         </button>
         <button
-          className={`relative m-1 h-full rounded-md border-2 bg-white p-2 text-white shadow-white drop-shadow-md transition-colors hover:bg-red md:w-12 ${
-            isDownloadable ? "border-red" : "cursor-help bg-gray"
+          className={`relative m-1 h-full w-40 rounded-md border-2 p-2 text-white drop-shadow-md transition-colors lg:w-20  md:w-12 ${
+            isDownloadable
+              ? "border-red bg-white hover:bg-red"
+              : "cursor-help border-gray bg-gray"
           }`}
           disabled={!isDownloadable}
           onClick={() => onDownload()}
@@ -61,14 +63,17 @@ const Header = ({
       <div className="headline-wrapper self-center text-center">
         <h1 className="text-3xl font-bold text-blue drop-shadow hover:underline">
           <a href="https://github.com/chrstnbwnkl/zack-carto" target="blank">
-            Zack&nbsp;
-            <Lightning
-              style={{
-                height: "1em",
-                display: "inline",
-              }}
-            />
-            &nbsp;[<i>t͡sak</i>]
+            Zack
+            <span className="sm:hidden">
+              &nbsp;
+              <Lightning
+                style={{
+                  height: "1em",
+                  display: "inline",
+                }}
+              />
+              &nbsp;[<i>t͡sak</i>]
+            </span>
           </a>
         </h1>
         <p className="m-1 text-xs text-blue lg:hidden">

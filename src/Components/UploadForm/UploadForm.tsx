@@ -2,11 +2,10 @@ import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ReactElement } from "react";
 
-// import "./UploadForm.css"
-
 interface UploadFormProps {
   onUpload: (fileList: FileList) => void;
 }
+
 const UploadForm = ({ onUpload }: UploadFormProps): ReactElement => {
   const [dragActive, setDragActive] = React.useState(false);
 
@@ -32,11 +31,10 @@ const UploadForm = ({ onUpload }: UploadFormProps): ReactElement => {
   return (
     <button className="border-1 flex flex-1 cursor-default justify-center self-center first:mr-auto last:ml-auto lg:p-2">
       <form
-        id="form-geojson-upload"
         onDragEnter={(e) => handleDrag(e)}
         title="Drag and drop your own GeoJSON here"
-        className={`border-1 relative m-1 h-full cursor-help rounded-md border-white p-2 align-middle text-white shadow-white drop-shadow-md  ${
-          dragActive ? "bg-orange" : "bg-orange"
+        className={`relative m-1 h-full cursor-help rounded-md border-2 border-orange p-2 align-middle text-blue shadow-white drop-shadow-md transition-colors lg:w-20 md:w-12  ${
+          dragActive ? "bg-orange" : "bg-white"
         }`}
       >
         <input
@@ -55,14 +53,7 @@ const UploadForm = ({ onUpload }: UploadFormProps): ReactElement => {
         </label>
         {dragActive && (
           <div
-            id="drag-pseudo-element"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-            }}
+            className="absolute top-0 left-0 h-full w-full"
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}

@@ -3,7 +3,6 @@ import L from "leaflet";
 import { FeatureCollection } from "geojson";
 
 import "leaflet/dist/leaflet.css";
-// import "./Map.css"
 import { ZackConfig } from "../../config";
 
 interface MapProps {
@@ -30,8 +29,6 @@ const Map = ({
 }: MapProps): ReactElement => {
   const [mapInstance, setMapInstance] = useState<null | L.Map>(null);
   const mapRef = useRef<null | L.Map>(null);
-
-  const errorClsName = `error-wrapper ${error ? "visible" : "hidden"}`;
 
   const handleMove = (e: L.LeafletEvent) => {
     const center = e.target.getCenter();
@@ -65,9 +62,6 @@ const Map = ({
   }, []); // only render once
 
   useEffect(() => {
-    console.log("fc changed in map component");
-    console.log(featureCollections);
-    console.log(mapRef.current);
     const layers: L.Layer[] = [];
     if (Object.keys(featureCollections).length > 0) {
       let k: keyof ZackConfig;
@@ -122,12 +116,29 @@ const Map = ({
 
   return (
     <>
-      <div id="map" className="h-full w-full md:h-2/6"></div>
-      <div className={errorClsName}>
-        <div className="error-inner">
-          <p>{error}</p>
+      <div id="map" className="flex-grow md:h-2/6 md:w-screen"></div>
+      {/* <div
+        className={`alert alert-error absolute top-36 left-1/2 w-3/12 -translate-x-1/2 -translate-y-1/2 transform shadow-lg transition-opacity ${
+          error ? "z-1000" : "-z-1 invisible opacity-0"
+        } `}
+      >
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 flex-shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{error}</span>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

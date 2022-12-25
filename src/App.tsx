@@ -6,7 +6,6 @@ import Footer from "./Components/Footer/Footer";
 import { toFeatureCollection, queryOverpass } from "./utils/api";
 import { FeatureCollection } from "geojson";
 
-// import "./App.scss"
 import ConfigureTab from "./Components/ConfigureTab/ConfigureTab";
 import { useLocalStorage } from "./utils/hooks";
 import { OSMTags, ZackConfig } from "./config";
@@ -59,16 +58,23 @@ export const App = ({ config }: AppProps): ReactElement => {
 
     queryOverpass(updatedConfig, bounds)
       .then((res) => {
-        setFeatureCollections((current) => {
-          console.log("setting fc");
-          return (Object.keys(config) as OSMTags[]).reduce((prev, k) => {
-            const c = config[k];
-            return {
-              ...prev,
-              [k]: toFeatureCollection(res.data.elements.filter(c.filter)),
-            };
-          }, {});
-        });
+        if (res.data.elements.length > 0) {
+          setFeatureCollections((current) => {
+            return (Object.keys(config) as OSMTags[]).reduce((prev, k) => {
+              const c = config[k];
+              return {
+                ...prev,
+                [k]: toFeatureCollection(res.data.elements.filter(c.filter)),
+              };
+            }, {});
+          });
+        } else {
+          setError("The query returned an empty result set.");
+          setTimeout(() => {
+            setError("");
+          }, 5000);
+        }
+
         setIsLoading(false);
       })
       .catch((reason) => {
@@ -139,7 +145,7 @@ export const App = ({ config }: AppProps): ReactElement => {
     });
   };
   return (
-    <div className="flex h-screen w-screen flex-col">
+    <div className="flex h-screen w-full flex-col">
       <Header
         onRun={handleRun}
         onDownload={handleDownload}
@@ -156,7 +162,7 @@ export const App = ({ config }: AppProps): ReactElement => {
         error={error}
         onDetailUpdate={onDetailUpdate}
       />
-      <Footer className="flex h-8 flex-row content-center justify-center space-x-1 bg-blue-50 py-1" />
+      <Footer className="flex h-8 w-full flex-row content-center justify-center space-x-1 border-t border-blue-90 bg-blue-50 py-1" />
     </div>
   );
 };
