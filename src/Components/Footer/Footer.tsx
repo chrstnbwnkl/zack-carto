@@ -1,18 +1,14 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
-import "./Footer.css"
-
-const Footer = (): ReactElement => {
+const Footer = ({ className }: { className: string }): ReactElement => {
   return (
-    <footer>
-      <div className="copyright">
-        <p>
-          © <a href="https://github.com/chrstnbwnkl">Christian Beiwinkel</a>{" "}
-          {new Date().getFullYear()}
-        </p>
-      </div>
+    <footer className={className}>
+      <p>
+        © <a href="https://github.com/chrstnbwnkl">Christian Beiwinkel</a>{" "}
+        {new Date().getFullYear()}
+      </p>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

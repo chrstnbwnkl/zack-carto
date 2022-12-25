@@ -1,24 +1,24 @@
-import React, { useState, useRef, useEffect, ReactElement } from "react"
-import L from "leaflet"
-import { FeatureCollection } from "geojson"
+import React, { useState, useRef, useEffect, ReactElement } from "react";
+import L from "leaflet";
+import { FeatureCollection } from "geojson";
 
-import "leaflet/dist/leaflet.css"
-import "./Map.css"
-import { ZackConfig } from "../../config"
+import "leaflet/dist/leaflet.css";
+// import "./Map.css"
+import { ZackConfig } from "../../config";
 
 interface MapProps {
-  view: { center: [number, number]; zoom: number }
+  view: { center: [number, number]; zoom: number };
   onMove: (
     bounds: L.LatLngBounds,
     center?: [number, number],
     zoom?: number
-  ) => void
+  ) => void;
   featureCollections: {
-    [k: string]: FeatureCollection
-  }
-  uploadedGeoJSON: FeatureCollection[]
-  config: ZackConfig
-  error: string
+    [k: string]: FeatureCollection;
+  };
+  uploadedGeoJSON: FeatureCollection[];
+  config: ZackConfig;
+  error: string;
 }
 const Map = ({
   view,
@@ -28,108 +28,108 @@ const Map = ({
   config,
   error,
 }: MapProps): ReactElement => {
-  const [mapInstance, setMapInstance] = useState<null | L.Map>(null)
-  const mapRef = useRef<null | L.Map>(null)
+  const [mapInstance, setMapInstance] = useState<null | L.Map>(null);
+  const mapRef = useRef<null | L.Map>(null);
 
-  const errorClsName = `error-wrapper ${error ? "visible" : "hidden"}`
+  const errorClsName = `error-wrapper ${error ? "visible" : "hidden"}`;
 
   const handleMove = (e: L.LeafletEvent) => {
-    const center = e.target.getCenter()
-    const zoom = e.target.getZoom()
-    onMove(e.target.getBounds(), [center.lat, center.lng], zoom)
-  }
+    const center = e.target.getCenter();
+    const zoom = e.target.getZoom();
+    onMove(e.target.getBounds(), [center.lat, center.lng], zoom);
+  };
 
   useEffect(() => {
     mapRef.current = L.map("map", {
       center: view.center,
       zoom: view.zoom,
       renderer: L.canvas(),
-    })
+    });
     const osm = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
         maxZoom: 19,
         attribution: "© OpenStreetMap",
       }
-    )
-    osm.addTo(mapRef.current)
-    setMapInstance(mapRef.current as L.Map)
-    onMove(mapRef.current.getBounds())
+    );
+    osm.addTo(mapRef.current);
+    setMapInstance(mapRef.current as L.Map);
+    onMove(mapRef.current.getBounds());
     mapRef.current.on("move", (e) => {
-      handleMove(e)
-    })
+      handleMove(e);
+    });
 
     return () => {
-      ;(mapRef.current as L.Map).remove()
-    }
-  }, []) // only render once
+      (mapRef.current as L.Map).remove();
+    };
+  }, []); // only render once
 
   useEffect(() => {
-    console.log("fc changed in map component")
-    console.log(featureCollections)
-    console.log(mapRef.current)
-    const layers: L.Layer[] = []
+    console.log("fc changed in map component");
+    console.log(featureCollections);
+    console.log(mapRef.current);
+    const layers: L.Layer[] = [];
     if (Object.keys(featureCollections).length > 0) {
-      let k: keyof ZackConfig
+      let k: keyof ZackConfig;
       for (k in config) {
-        const c = config[k]
-        const fc = featureCollections[k]
-        const opts: L.GeoJSONOptions = {}
+        const c = config[k];
+        const fc = featureCollections[k];
+        const opts: L.GeoJSONOptions = {};
         if (c.osmElement !== "node") {
-          const styleFunc = c.leafletFunc()
-          opts.style = styleFunc
+          const styleFunc = c.leafletFunc();
+          opts.style = styleFunc;
         } else {
           opts.pointToLayer = (feat, ll) => {
-            return L.circleMarker(ll, c.leafletFunc()(feat))
-          }
+            return L.circleMarker(ll, c.leafletFunc()(feat));
+          };
         }
-        const geoJSON = L.geoJSON(fc, opts).addTo(mapInstance as L.Map)
-        layers.push(geoJSON)
+        const geoJSON = L.geoJSON(fc, opts).addTo(mapInstance as L.Map);
+        layers.push(geoJSON);
       }
     }
 
     return () => {
       layers.forEach((layer) => {
         if (typeof layer.remove === "function") {
-          layer.remove()
+          layer.remove();
         }
-      })
-    }
-  }, [featureCollections, mapInstance])
+      });
+    };
+  }, [featureCollections, mapInstance]);
 
   useEffect(() => {
-    const layers: L.GeoJSON[] = []
+    const layers: L.GeoJSON[] = [];
     uploadedGeoJSON.forEach((geoJSON) => {
-      let opts: L.GeoJSONOptions = {}
+      let opts: L.GeoJSONOptions = {};
       if (geoJSON.features[0].geometry.type === "Point") {
         opts.pointToLayer = (feat, ll) => {
-          return L.circleMarker(ll)
-        }
+          return L.circleMarker(ll);
+        };
       }
-      const layer = L.geoJSON(geoJSON, opts).addTo(mapInstance as L.Map)
-      layers.push(layer)
-      console.log("layer added")
-    })
+      const layer = L.geoJSON(geoJSON, opts).addTo(mapInstance as L.Map);
+      layers.push(layer);
+      console.log("layer added");
+    });
 
     return () => {
       layers.forEach((layer) => {
         if (typeof layer.remove === "function") {
-          layer.remove()
+          layer.remove();
         }
-      })
-    }
-  }, [uploadedGeoJSON])
+      });
+    };
+  }, [uploadedGeoJSON]);
 
   return (
     <>
-      <div id="map"></div>
+      <div id="map" className="h-full w-full md:h-2/6"></div>
       <div className={errorClsName}>
         <div className="error-inner">
           <p>{error}</p>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Map
+export default Map;

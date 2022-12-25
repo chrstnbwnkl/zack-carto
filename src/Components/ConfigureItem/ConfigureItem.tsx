@@ -1,15 +1,15 @@
-import React, { ReactElement } from "react"
-import { OSMTags } from "../../config"
-import { makeReadableEnumeration } from "../../utils/misc"
-import { TagConfig } from "../../utils/osm"
+import React, { ReactElement } from "react";
+import { OSMTags } from "../../config";
+import { makeReadableEnumeration } from "../../utils/misc";
+import { TagConfig } from "../../utils/osm";
 
-import "./ConfigureItem.css"
+// import "./ConfigureItem.css"
 
 interface ConfirgureItemProps {
-  config: TagConfig
-  itemKey: OSMTags
-  sliderVal: number
-  onSliderChange: (itemKey: OSMTags, newVal: string) => void
+  config: TagConfig;
+  itemKey: OSMTags;
+  sliderVal: number;
+  onSliderChange: (itemKey: OSMTags, newVal: string) => void;
 }
 const ConfigureItem = ({
   config,
@@ -17,9 +17,9 @@ const ConfigureItem = ({
   sliderVal,
   onSliderChange,
 }: ConfirgureItemProps): ReactElement => {
-  const selectText = makeReadableEnumeration(config.displayNames, sliderVal)
+  const selectText = makeReadableEnumeration(config.displayNames, sliderVal);
   return (
-    <div className="configure-item">
+    <div className="pb-3">
       <div className="header">
         <p>
           <b>{config.title}: </b>
@@ -32,11 +32,14 @@ const ConfigureItem = ({
           max={config.values.length}
           value={sliderVal}
           onChange={(e) => onSliderChange(itemKey, e.target.value)}
+          className="range range-primary range-sm"
         ></input>
       </div>
-      <p>{selectText}</p>
+      <p className="rounded-lg border-2 border-transparent bg-blue-10 p-1 text-blue-90 md:hidden">
+        {selectText}
+      </p>
     </div>
-  )
-}
+  );
+};
 
-export default ConfigureItem
+export default ConfigureItem;
