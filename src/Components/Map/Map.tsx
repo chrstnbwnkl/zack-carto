@@ -117,8 +117,8 @@ const Map = ({
   return (
     <>
       <div id="map" className="flex-grow md:h-2/6 md:w-screen"></div>
-      {/* <div
-        className={`alert alert-error absolute top-36 left-1/2 w-3/12 -translate-x-1/2 -translate-y-1/2 transform shadow-lg transition-opacity ${
+      <div
+        className={`alert alert-error absolute top-36 left-1/2 w-auto -translate-x-1/2 -translate-y-1/2 transform shadow-lg transition-opacity ${
           error ? "z-1000" : "-z-1 invisible opacity-0"
         } `}
       >
@@ -138,7 +138,7 @@ const Map = ({
           </svg>
           <span>{error}</span>
         </div>
-      </div> */}
+      </div>
     </>
   );
 };
