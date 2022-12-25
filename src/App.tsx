@@ -1,12 +1,10 @@
 import React, { ReactElement, useState } from "react";
-import L, { LatLngBounds, map } from "leaflet";
-import Map from "./Components/Map/Map";
+import L, { LatLngBounds } from "leaflet";
 import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
 import { toFeatureCollection, queryOverpass } from "./utils/api";
 import { FeatureCollection } from "geojson";
 
-import ConfigureTab from "./Components/ConfigureTab/ConfigureTab";
 import { useLocalStorage } from "./utils/hooks";
 import { OSMTags, ZackConfig } from "./config";
 import MainContent from "./Components/MainContent/MainContent";

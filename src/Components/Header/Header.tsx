@@ -10,6 +10,7 @@ import { ReactComponent as Lightning } from "../../assets/img/twemoji-26a1.svg";
 
 // import "./Header.css"
 import UploadForm from "../UploadForm/UploadForm";
+import Button from "../Button/Button";
 
 interface HeaderProps {
   onRun: () => void;
@@ -32,9 +33,9 @@ const Header = ({
   return (
     <header className="flex h-24 w-full flex-row content-center justify-between space-x-1 border-b border-blue-90 bg-blue-50">
       <div className="flex flex-1 flex-row justify-evenly self-center first:mr-auto last:ml-auto lg:p-2">
-        <button
-          className={`relative m-1 h-full w-20 rounded-md border-2 border-green bg-white p-2 shadow-white drop-shadow-md transition-colors hover:bg-green md:w-12`}
-          onClick={() => onRun()}
+        <Button
+          additionalClasses={`relative m-1 h-full w-20 border-green p-2 drop-shadow-md hover:bg-green md:w-12`}
+          onClick={onRun}
           title="Run overpass query"
         >
           <b className="text-blue lg:hidden">Run &nbsp;</b>
@@ -43,9 +44,9 @@ const Header = ({
             className={iconClassName}
             color="#1D3557"
           />
-        </button>
-        <button
-          className={`relative m-1 h-full w-40 rounded-md border-2 p-2 text-white drop-shadow-md transition-colors lg:w-20  md:w-12 ${
+        </Button>
+        <Button
+          additionalClasses={`relative m-1 h-full w-40 p-2 lg:w-20  md:w-12 ${
             isDownloadable
               ? "border-red bg-white hover:bg-red"
               : "cursor-help border-gray bg-gray"
@@ -58,7 +59,7 @@ const Header = ({
         >
           <b className="text-blue lg:hidden">Download SVG &nbsp;</b>
           <FontAwesomeIcon icon={faDownload} color="#1D3557" />
-        </button>
+        </Button>
       </div>
       <div className="headline-wrapper self-center text-center">
         <h1 className="text-3xl font-bold text-blue drop-shadow hover:underline">

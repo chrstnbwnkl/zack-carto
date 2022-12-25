@@ -3,8 +3,6 @@ import { OSMTags, ZackConfig } from "../../config";
 
 import ConfigureItem from "../ConfigureItem/ConfigureItem";
 
-// import "./ConfigureTab.css"
-
 interface ConfigureTabProps {
   config: ZackConfig;
   handleSlidersChanged: (itemKey: OSMTags, newVal: string) => void;

@@ -3,8 +3,6 @@ import { OSMTags } from "../../config";
 import { makeReadableEnumeration } from "../../utils/misc";
 import { TagConfig } from "../../utils/osm";
 
-// import "./ConfigureItem.css"
-
 interface ConfirgureItemProps {
   config: TagConfig;
   itemKey: OSMTags;
