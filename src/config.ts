@@ -1,13 +1,13 @@
-import { OverpassFeatureLike } from "./utils/api"
-import { TagConfig } from "./utils/osm"
+import { OverpassFeatureLike } from "./utils/api";
+import { TagConfig } from "./utils/osm";
 
-export type OSMTags = "roads" | "waterways" | "places"
+export type OSMTags = "roads" | "waterways" | "places";
 
 export type ZackConfig = {
-  [k in OSMTags]: TagConfig
-}
+  [k in OSMTags]: TagConfig;
+};
 
-export const CONFIG: ZackConfig = {
+export const zackConfig: ZackConfig = {
   roads: new TagConfig({
     title: "Roads",
     osmElement: "way",
@@ -90,4 +90,11 @@ export const CONFIG: ZackConfig = {
     ],
     defaultDetail: 3,
   }),
+};
+
+export interface Settings {
+  timeout: number;
 }
+export const defaultSettings: Settings = {
+  timeout: 20,
+};

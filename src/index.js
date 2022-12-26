@@ -1,9 +1,9 @@
 import React from "react";
 import reactDOM from "react-dom/client";
-import { CONFIG } from "./config";
+import { zackConfig, defaultSettings } from "./config";
 import { App } from "./App";
 
 import "./index.css";
 
 const root = reactDOM.createRoot(document.getElementById("root"));
-root.render(<App config={CONFIG} />);
+root.render(<App config={zackConfig} defaultSettings={defaultSettings} />);

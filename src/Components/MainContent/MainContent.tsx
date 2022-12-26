@@ -40,7 +40,7 @@ const MainContent = ({
     <div className="flex min-h-0 w-screen flex-1 md:flex-col">
       <div
         className={`relative w-4/12 overflow-y-auto md:order-2 md:w-full ${
-          configPanelClosed ? "md:h-10" : "md:h-4/6"
+          configPanelClosed ? "md:h-10 md:overflow-y-hidden" : "md:h-4/6"
         }`}
       >
         <button

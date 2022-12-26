@@ -6,16 +6,23 @@ import { toFeatureCollection, queryOverpass } from "./utils/api";
 import { FeatureCollection } from "geojson";
 
 import { useLocalStorage } from "./utils/hooks";
-import { OSMTags, ZackConfig } from "./config";
+import { OSMTags, Settings, ZackConfig } from "./config";
 import MainContent from "./Components/MainContent/MainContent";
+import { AxiosError } from "axios";
 
 interface AppProps {
   config: ZackConfig;
+  defaultSettings: Settings;
 }
-export const App = ({ config }: AppProps): ReactElement => {
+export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
   const [mapDefaults, setMapDefaults] = useLocalStorage(
     "mapstate",
     JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
+  );
+
+  const [settings, setSettings] = useLocalStorage(
+    "zackSettings",
+    JSON.stringify(defaultSettings)
   );
   const [bounds, setBounds] = useState(new LatLngBounds([0, 0], [0, 0]));
   const [runBounds, setRunBounds] = useState(new LatLngBounds([0, 0], [0, 0]));
@@ -53,8 +60,11 @@ export const App = ({ config }: AppProps): ReactElement => {
       return;
     }
     setError("");
-
-    queryOverpass(updatedConfig, bounds)
+    const settingsObj: Settings = JSON.parse(settings);
+    console.log(settingsObj);
+    queryOverpass(updatedConfig, bounds, {
+      timeout: Number(settingsObj?.timeout ?? 0), // leave a buffer for Overpass to respond
+    })
       .then((res) => {
         if (res.data.elements.length > 0) {
           setFeatureCollections((current) => {
@@ -66,19 +76,21 @@ export const App = ({ config }: AppProps): ReactElement => {
               };
             }, {});
           });
+          setIsLoading(false);
         } else {
           setError("The query returned an empty result set.");
           setTimeout(() => {
             setError("");
           }, 5000);
+          setIsLoading(false);
         }
-
-        setIsLoading(false);
       })
-      .catch((reason) => {
-        console.log(reason);
+      .catch((reason: AxiosError) => {
+        setError(reason.message);
+        setTimeout(() => {
+          setError("");
+        }, 5000);
         setIsLoading(false);
-        setError("Something went wrong while fetching the data.");
       });
   };
   const handleDownload = () => {
@@ -143,24 +155,58 @@ export const App = ({ config }: AppProps): ReactElement => {
     });
   };
   return (
-    <div className="flex h-screen w-full flex-col">
-      <Header
-        onRun={handleRun}
-        onDownload={handleDownload}
-        isLoading={isLoading}
-        isDownloadable={Object.keys(featureCollections).length > 0}
-        onUpload={handleUpload}
-      />
-      <MainContent
-        mapDefaults={mapDefaults}
-        handleMove={handleMove}
-        featureCollections={featureCollections}
-        uploadedGeoJSON={uploadedGeoJSON}
-        updatedConfig={updatedConfig}
-        error={error}
-        onDetailUpdate={onDetailUpdate}
-      />
-      <Footer className="flex h-8 w-full flex-row content-center justify-center space-x-1 border-t border-blue-90 bg-blue-50 py-1" />
-    </div>
+    <>
+      <div className="flex h-screen w-full flex-col">
+        <Header
+          onRun={handleRun}
+          onDownload={handleDownload}
+          isLoading={isLoading}
+          isDownloadable={Object.keys(featureCollections).length > 0}
+          onUpload={handleUpload}
+        />
+        <MainContent
+          mapDefaults={mapDefaults}
+          handleMove={handleMove}
+          featureCollections={featureCollections}
+          uploadedGeoJSON={uploadedGeoJSON}
+          updatedConfig={updatedConfig}
+          error={error}
+          onDetailUpdate={onDetailUpdate}
+        />
+        <Footer className="flex h-12 w-full flex-row content-end justify-center border-t border-blue-90 bg-blue-50 py-1" />
+      </div>
+      <input type="checkbox" id="settings-modal" className="modal-toggle" />
+      <label htmlFor="settings-modal" className="modal cursor-pointer">
+        <label className="modal-box relative" htmlFor="">
+          <h2 className="pb-6 text-center text-2xl font-bold text-blue drop-shadow-md">
+            Settings
+          </h2>
+          <div className=" text-blue">
+            <form>
+              <label
+                htmlFor="timeout-input"
+                title="The number of seconds Overpass will take to return a result. If the query hasn't finished by the end of the timeout, an empty result set is returned. "
+              >
+                Overpass timeout (seconds):{" "}
+              </label>
+              <input
+                id="timeout-input"
+                type="number"
+                className="input-bordered input h-8 w-20"
+                min="1"
+                max="360"
+                value={JSON.parse(settings)?.timeout}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSettings((curr: string) => {
+                    const obj = JSON.parse(curr);
+                    return JSON.stringify({ ...obj, timeout: e.target.value });
+                  });
+                }}
+              />
+            </form>
+          </div>
+        </label>
+      </label>
+    </>
   );
 };

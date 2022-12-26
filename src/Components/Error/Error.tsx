@@ -5,7 +5,7 @@ interface ErrorProps {
 const Error = ({ errorMessage }: ErrorProps): ReactElement => {
   return (
     <div
-      className={`alert alert-error absolute top-36 w-auto -translate-x-1/2 -translate-y-1/2 transform shadow-lg transition-opacity ${
+      className={`alert alert-error absolute left-1/2 top-36 w-auto -translate-x-1/2 -translate-y-1/2 transform shadow-lg transition-opacity ${
         errorMessage ? "z-1000" : "-z-1 invisible opacity-0"
       } `}
     >

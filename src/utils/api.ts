@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import * as L from "leaflet";
 import { ZackConfig } from "../config";
 
@@ -31,11 +31,20 @@ export interface OverpassFeatureLike {
 
 const OVERPASS_URL = "https://lz4.overpass-api.de/api/interpreter";
 
-export const queryOverpass = (reqObj: ZackConfig, bounds: L.LatLngBounds) => {
+export const queryOverpass = (
+  reqObj: ZackConfig,
+  bounds: L.LatLngBounds,
+  axiosOpts?: AxiosRequestConfig
+) => {
   const boundsParam = boundsToParam(bounds);
   const reqStr = makeReqParams(reqObj, boundsParam);
-  const url = `${OVERPASS_URL}?data=[out:json][timeout:2];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`;
-  return axios.get(url);
+  const url = `${OVERPASS_URL}?data=[out:json][timeout:${
+    axiosOpts?.timeout ?? 20
+  }];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`;
+  return axios.get(url, {
+    ...axiosOpts,
+    timeout: ((axiosOpts?.timeout ?? 20) + 3) * 1000,
+  });
 };
 
 const COORD_PRECISION = 5;
