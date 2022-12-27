@@ -9,6 +9,7 @@ import { useLocalStorage } from "./utils/hooks";
 import { OSMTags, Settings, ZackConfig } from "./config";
 import MainContent from "./Components/MainContent/MainContent";
 import { AxiosError } from "axios";
+import SettingsModal from "./Components/Settings/Settings";
 
 interface AppProps {
   config: ZackConfig;
@@ -142,6 +143,20 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
           .catch(() => reject());
       });
     });
+
+    const handleSettingsChange = (
+      key: string,
+      value: number | string
+    ): void => {
+      setSettings((curr: string) => {
+        const obj = JSON.parse(curr);
+        return JSON.stringify({
+          ...obj,
+          key: value,
+        });
+      });
+    };
+
     Promise.all(promises).then((geojsonStrs) => {
       setUploadedGeoJSON((current: FeatureCollection[]) => {
         const featureCollections = (geojsonStrs as string[]).reduce(
@@ -175,38 +190,18 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
         />
         <Footer className="flex h-12 w-full flex-row content-end justify-center border-t border-blue-90 bg-blue-50 py-1" />
       </div>
-      <input type="checkbox" id="settings-modal" className="modal-toggle" />
-      <label htmlFor="settings-modal" className="modal cursor-pointer">
-        <label className="modal-box relative" htmlFor="">
-          <h2 className="pb-6 text-center text-2xl font-bold text-blue drop-shadow-md">
-            Settings
-          </h2>
-          <div className=" text-blue">
-            <form>
-              <label
-                htmlFor="timeout-input"
-                title="The number of seconds Overpass will take to return a result. If the query hasn't finished by the end of the timeout, an empty result set is returned. "
-              >
-                Overpass timeout (seconds):{" "}
-              </label>
-              <input
-                id="timeout-input"
-                type="number"
-                className="input-bordered input h-8 w-20"
-                min="1"
-                max="360"
-                value={JSON.parse(settings)?.timeout}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setSettings((curr: string) => {
-                    const obj = JSON.parse(curr);
-                    return JSON.stringify({ ...obj, timeout: e.target.value });
-                  });
-                }}
-              />
-            </form>
-          </div>
-        </label>
-      </label>
+      <SettingsModal
+        settings={settings}
+        onChange={(key, value) => {
+          setSettings((curr: string) => {
+            const obj = JSON.parse(curr);
+            return JSON.stringify({
+              ...obj,
+              [key]: value,
+            });
+          });
+        }}
+      />
     </>
   );
 };
