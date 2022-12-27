@@ -62,16 +62,15 @@ const makeReqParams = (obj: ZackConfig, boundParam: string) => {
   const paramArr = [];
   let key: keyof ZackConfig;
   for (key in obj) {
-    const config = obj[key];
-    const queries =
-      config.detail < config.values.length
-        ? config.queryParams.slice(1, config.detail + 1).flat()
-        : config.queryParams.slice(1).flat();
-    paramArr.push(
-      ...queries.map((q) => {
-        return `${q}${boundParam}`;
-      })
-    );
+    if (obj[key].active) {
+      const config = obj[key];
+      const queries = config.queryParams.slice(0, config.detail + 1).flat();
+      paramArr.push(
+        ...queries.map((q) => {
+          return `${q}${boundParam}`;
+        })
+      );
+    }
   }
   return paramArr.join("");
 };

@@ -35,6 +35,7 @@ export const zackConfig: ZackConfig = {
       { color: "#555", weight: 1, fill: false },
     ],
     defaultDetail: 3,
+    active: true,
   }),
   waterways: new TagConfig({
     title: "Waterways",
@@ -50,6 +51,7 @@ export const zackConfig: ZackConfig = {
       { color: "#4287f5", weight: 1 },
     ],
     defaultDetail: 2,
+    active: true,
   }),
   places: new TagConfig({
     title: "Places",
@@ -89,6 +91,7 @@ export const zackConfig: ZackConfig = {
       },
     ],
     defaultDetail: 3,
+    active: true,
   }),
 };
 

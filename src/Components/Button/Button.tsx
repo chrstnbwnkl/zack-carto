@@ -18,7 +18,7 @@ const Button = ({
   return (
     <button
       //   className={`relative m-1 h-full w-20 rounded-md border-2  bg-white p-2 drop-shadow-md transition-colors hover:bg-green md:w-12 ${additionalClasses}`}
-      className={`relative m-1 h-full rounded-md border-2  bg-white drop-shadow-md transition-colors ${
+      className={`relative m-1 rounded-md border-2  bg-white drop-shadow-md transition-colors ${
         additionalClasses ?? ""
       }`}
       onClick={onClick ? () => onClick() : () => {}}

@@ -1,5 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronDown,
+  faChevronUp,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { FeatureCollection } from "geojson";
 import { LatLngBounds } from "leaflet";
 import React, { useState } from "react";
@@ -7,6 +11,8 @@ import { OSMTags, ZackConfig } from "../../config";
 import ConfigureTab from "../ConfigureTab/ConfigureTab";
 import Error from "../Error/Error";
 import Map from "../Map/Map";
+import { TagConfig } from "../../utils/osm";
+import Button from "../Button/Button";
 
 interface MainContentProps {
   mapDefaults: string;
@@ -19,7 +25,11 @@ interface MainContentProps {
   uploadedGeoJSON: FeatureCollection[];
   updatedConfig: ZackConfig;
   error: string;
-  onDetailUpdate: (itemKey: OSMTags, newVal: string) => void;
+  onConfigUpdate: (
+    itemKey: OSMTags,
+    configKey: keyof TagConfig,
+    value: string | number | boolean
+  ) => void;
 }
 
 const MainContent = ({
@@ -29,7 +39,7 @@ const MainContent = ({
   uploadedGeoJSON,
   updatedConfig,
   error,
-  onDetailUpdate,
+  onConfigUpdate,
 }: MainContentProps) => {
   const [configPanelClosed, setConfigPanelClosed] = useState(false);
 
@@ -39,7 +49,7 @@ const MainContent = ({
   return (
     <div className="flex min-h-0 w-screen flex-1 md:flex-col">
       <div
-        className={`relative w-4/12 overflow-y-auto md:order-2 md:w-full ${
+        className={`relative flex w-4/12 flex-col justify-between overflow-y-auto md:order-2 md:w-full ${
           configPanelClosed ? "md:h-10 md:overflow-y-hidden" : "md:h-4/6"
         }`}
       >
@@ -77,8 +87,38 @@ const MainContent = ({
           </p>
           <ConfigureTab
             config={updatedConfig}
-            handleSlidersChanged={onDetailUpdate}
+            onConfigUpdate={onConfigUpdate}
           />
+          <div className="flex justify-center self-end p-4 ">
+            <label className="label"></label>
+            <select
+              className="select-bordered select border-2 border-blue-90 text-blue drop-shadow-lg"
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                e.preventDefault();
+                e.target.value = "default"; // set placeholder as selected value
+              }}
+            >
+              <option value="default" disabled selected>
+                Add layer
+              </option>
+              {(Object.keys(updatedConfig) as OSMTags[])
+                .filter((k) => !updatedConfig[k].active)
+                .map((k) => {
+                  const c: TagConfig = updatedConfig[k];
+                  return (
+                    <option
+                      onClick={(e: React.MouseEvent<HTMLOptionElement>) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onConfigUpdate(k, "active", true);
+                      }}
+                    >
+                      {c.title}
+                    </option>
+                  );
+                })}
+            </select>
+          </div>
         </div>
       </div>
       <Map

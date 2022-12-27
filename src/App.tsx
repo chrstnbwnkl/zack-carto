@@ -10,6 +10,7 @@ import { OSMTags, Settings, ZackConfig } from "./config";
 import MainContent from "./Components/MainContent/MainContent";
 import { AxiosError } from "axios";
 import SettingsModal from "./Components/Settings/Settings";
+import { TagConfig } from "./utils/osm";
 
 interface AppProps {
   config: ZackConfig;
@@ -35,13 +36,17 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
   );
   const [updatedConfig, setUpdatedConfig] = useState(config);
 
-  const onDetailUpdate = (itemKey: OSMTags, detail: string): void => {
+  const onConfigUpdate = (
+    itemKey: OSMTags,
+    configKey: keyof TagConfig,
+    value: string | number | boolean
+  ): void => {
     setUpdatedConfig((current: ZackConfig) => {
       return {
         ...current,
         [itemKey]: {
           ...current[itemKey],
-          detail: Number(detail),
+          [configKey]: value,
         },
       };
     });
@@ -50,7 +55,9 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
   const handleRun = () => {
     setIsLoading(true);
     setRunBounds(bounds);
-    if (Object.values(updatedConfig).every((v) => v.detail === 0)) {
+    if (
+      Object.values(updatedConfig).every((v) => v.detail === 0 || !v.active)
+    ) {
       setError(
         "Query cannot be empty: please increase at least one of the sliders."
       );
@@ -62,7 +69,6 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
     }
     setError("");
     const settingsObj: Settings = JSON.parse(settings);
-    console.log(settingsObj);
     queryOverpass(updatedConfig, bounds, {
       timeout: Number(settingsObj?.timeout ?? 0), // leave a buffer for Overpass to respond
     })
@@ -144,19 +150,6 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
       });
     });
 
-    const handleSettingsChange = (
-      key: string,
-      value: number | string
-    ): void => {
-      setSettings((curr: string) => {
-        const obj = JSON.parse(curr);
-        return JSON.stringify({
-          ...obj,
-          key: value,
-        });
-      });
-    };
-
     Promise.all(promises).then((geojsonStrs) => {
       setUploadedGeoJSON((current: FeatureCollection[]) => {
         const featureCollections = (geojsonStrs as string[]).reduce(
@@ -169,6 +162,17 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
       });
     });
   };
+
+  const handleSettingsChange = (key: string, value: number | string): void => {
+    setSettings((curr: string) => {
+      const obj = JSON.parse(curr);
+      return JSON.stringify({
+        ...obj,
+        [key]: value,
+      });
+    });
+  };
+
   return (
     <>
       <div className="flex h-screen w-full flex-col">
@@ -186,22 +190,11 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
           uploadedGeoJSON={uploadedGeoJSON}
           updatedConfig={updatedConfig}
           error={error}
-          onDetailUpdate={onDetailUpdate}
+          onConfigUpdate={onConfigUpdate}
         />
         <Footer className="flex h-12 w-full flex-row content-end justify-center border-t border-blue-90 bg-blue-50 py-1" />
       </div>
-      <SettingsModal
-        settings={settings}
-        onChange={(key, value) => {
-          setSettings((curr: string) => {
-            const obj = JSON.parse(curr);
-            return JSON.stringify({
-              ...obj,
-              [key]: value,
-            });
-          });
-        }}
-      />
+      <SettingsModal settings={settings} onChange={handleSettingsChange} />
     </>
   );
 };

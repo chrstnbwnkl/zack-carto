@@ -1,34 +1,41 @@
 import React, { ReactElement } from "react";
 import { OSMTags, ZackConfig } from "../../config";
+import { TagConfig } from "../../utils/osm";
 
 import ConfigureItem from "../ConfigureItem/ConfigureItem";
 
 interface ConfigureTabProps {
   config: ZackConfig;
-  handleSlidersChanged: (itemKey: OSMTags, newVal: string) => void;
+  onConfigUpdate: (
+    itemKey: OSMTags,
+    configKey: keyof TagConfig,
+    value: string | number | boolean
+  ) => void;
 }
 const ConfigureTab = ({
   config,
-  handleSlidersChanged,
+  onConfigUpdate,
 }: ConfigureTabProps): ReactElement => {
   return (
     <>
       <div className="p-3">
-        {(Object.keys(config) as (keyof ZackConfig)[]).map((k) => {
-          const c = config[k];
-          return (
-            <div key={k} className="py-2">
-              <ConfigureItem
-                key={k}
-                itemKey={k}
-                config={c}
-                sliderVal={config[k].detail}
-                onSliderChange={handleSlidersChanged}
-              />
-              <hr key={`${k}--hr`} />
-            </div>
-          );
-        })}
+        {(Object.keys(config) as (keyof ZackConfig)[])
+          .filter((k) => config[k].active)
+          .map((k) => {
+            const c = config[k];
+            return (
+              <div key={k} className="py-2">
+                <ConfigureItem
+                  key={k}
+                  itemKey={k}
+                  config={c}
+                  sliderVal={config[k].detail}
+                  onConfigUpdate={onConfigUpdate.bind(null, k)}
+                />
+                <hr key={`${k}--hr`} />
+              </div>
+            );
+          })}
       </div>
     </>
   );
