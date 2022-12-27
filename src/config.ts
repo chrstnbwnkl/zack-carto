@@ -7,6 +7,9 @@ export type ZackConfig = {
   [k in OSMTags]: TagConfig;
 };
 
+/**
+ * The default configuration for the Zack application. New layers should be added here.
+ */
 export const zackConfig: ZackConfig = {
   roads: new TagConfig({
     title: "Roads",

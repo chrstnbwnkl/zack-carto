@@ -16,6 +16,13 @@ interface AppProps {
   config: ZackConfig;
   defaultSettings: Settings;
 }
+/**
+ * Main application.
+ *
+ * @param config: Default configuration for the different layers, such as style, active state, level of detail
+ * @param defaultSettings: Default settings
+ * @returns
+ */
 export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
   const [mapDefaults, setMapDefaults] = useLocalStorage(
     "mapstate",

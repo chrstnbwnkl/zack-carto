@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+/**
+ * Custom hook that uses the browser's local storage to
+ * persist state across reloads and sessions.
+ */
 export const useLocalStorage = (
   key: string,
   initialValue: string

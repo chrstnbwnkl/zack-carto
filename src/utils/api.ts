@@ -21,6 +21,9 @@ export interface Polygon {
   coordinates: PolygonCoordinates;
 }
 
+/**
+ * Overpass does not return features comforming to the GeoJSON specification.
+ */
 export interface OverpassFeatureLike {
   geometry: {
     coordinates: Point | LineString | Polygon;

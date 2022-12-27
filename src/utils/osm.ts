@@ -24,6 +24,7 @@ type MappedSVGStyleKeys =
   | "r"
   | "fill";
 
+/** Most style attributes are the same for leaflet and SVG, but some differ, so we need to create a mapping */
 const STYLEMAP: { [k in MappedLeafletStyleKeys]: MappedSVGStyleKeys } = {
   color: "stroke",
   fillOpacity: "fillOpacity",
@@ -34,17 +35,45 @@ const STYLEMAP: { [k in MappedLeafletStyleKeys]: MappedSVGStyleKeys } = {
 };
 
 interface TagConfigOpts {
+  /** The title of a layer. Displayed as a header on top of the pertaining slider.  */
   title: string;
+  /** one of [node, way, relation] */
   osmElement: string;
+  /** The OSM tag associated with the layer. */
   tag: string;
+  /**
+   * The value associated with each level of detail.
+   *
+   * @remarks
+   *
+   * A value can be a string or an array of string, if various values should be grouped for a
+   * certain level of detail
+   *
+   * @example
+   * ```js
+   *  <osmElement>[<tag>=<value>]
+   * ```
+   */
   values: (string | string[])[];
+  /** The display name for each level of detail. Needs to be of same length as `values`. */
   displayNames: string[];
+  /**
+   * Since all layers are fetched in a single query, a filter function is needed to
+   * group the returned features back into meaningful layers.
+   */
   filter: (feat: OverpassFeatureLike) => boolean;
+  /** Leaflet styles for each level of detail */
   leafletStyles: CircleMarkerOptions[];
+  /** The default level of detail for the given layer. */
   defaultDetail: number;
+  /** If true, the layer will be included in Overpass queries, otherwise, it will be omitted. */
   active: boolean;
 }
 
+/**
+ * Main configuration class for a layer. Layers are categorized by theme (such as roads, waterways, etc.)
+ *
+ */
 export class TagConfig {
   public title: string;
   public osmElement: string;
@@ -55,7 +84,9 @@ export class TagConfig {
   public leafletStyles: CircleMarkerOptions[];
   public defaultDetail: number;
   public detail: number;
+  /** List of query params derived from the values array. */
   public queryParams: (string | string[])[];
+  /** Styles for rendering the SVG. */
   public d3Styles: SVGOpts[];
   public leafletFunc: () => StyleFunction;
   public active: boolean;
@@ -98,9 +129,11 @@ export class TagConfig {
       }
     });
 
+    /** Mapping leaflet styles to SVG path styles */
     this.d3Styles = this.leafletStyles.map((style, i) => {
       return (Object.keys(style) as Array<MappedLeafletStyleKeys>).reduce(
         (prev, k) => {
+          // In leaflet, fill is a boolean value
           const opt =
             k === "fill" && (style[k] === true || style[k] === false)
               ? "none"
@@ -108,6 +141,7 @@ export class TagConfig {
           const key: MappedSVGStyleKeys = STYLEMAP[k];
           return { ...prev, [key]: opt };
         },
+        // default is no fill, stroke line caps are rounded to avoid chopped lines
         { strokeLinecap: "round", fill: "none" }
       );
     });
@@ -136,6 +170,9 @@ export class TagConfig {
   }
 }
 
+/**
+ * Assembles a query part for a given combination of OSM Element, OSM tag and value.
+ */
 const assembleQuery = (osmEl: string, tag: string, value: string) => {
   return `${osmEl}[${tag}="${value}"]`;
 };
