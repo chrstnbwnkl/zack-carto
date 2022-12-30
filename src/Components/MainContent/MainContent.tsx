@@ -11,7 +11,7 @@ import { OSMTags, ZackConfig } from "../../config";
 import ConfigureTab from "../ConfigureTab/ConfigureTab";
 import Error from "../Error/Error";
 import Map from "../Map/Map";
-import { TagConfig } from "../../utils/osm";
+import { Layer } from "../../utils/osm";
 import Button from "../Button/Button";
 
 interface MainContentProps {
@@ -27,7 +27,7 @@ interface MainContentProps {
   error: string;
   onConfigUpdate: (
     itemKey: OSMTags,
-    configKey: keyof TagConfig,
+    configKey: keyof Layer,
     value: string | number | boolean
   ) => void;
 }
@@ -93,20 +93,22 @@ const MainContent = ({
             <label className="label"></label>
             <select
               className="select-bordered select border-2 border-blue-90 text-blue drop-shadow-lg"
+              defaultValue="default"
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 e.preventDefault();
                 e.target.value = "default"; // set placeholder as selected value
               }}
             >
-              <option value="default" disabled selected>
+              <option key="default" value="default" disabled>
                 Add layer
               </option>
               {(Object.keys(updatedConfig) as OSMTags[])
                 .filter((k) => !updatedConfig[k].active)
                 .map((k) => {
-                  const c: TagConfig = updatedConfig[k];
+                  const c: Layer = updatedConfig[k];
                   return (
                     <option
+                      key={k}
                       onClick={(e: React.MouseEvent<HTMLOptionElement>) => {
                         e.preventDefault();
                         e.stopPropagation();

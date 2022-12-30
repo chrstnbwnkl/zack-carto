@@ -102,7 +102,6 @@ const Map = ({
       }
       const layer = L.geoJSON(geoJSON, opts).addTo(mapInstance as L.Map);
       layers.push(layer);
-      console.log("layer added");
     });
 
     return () => {

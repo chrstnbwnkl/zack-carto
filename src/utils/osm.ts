@@ -38,7 +38,7 @@ interface TagConfigOpts {
   /** The title of a layer. Displayed as a header on top of the pertaining slider.  */
   title: string;
   /** one of [node, way, relation] */
-  osmElement: string;
+  osmElement: string | string[];
   /** The OSM tag associated with the layer. */
   tag: string;
   /**
@@ -62,6 +62,8 @@ interface TagConfigOpts {
    * group the returned features back into meaningful layers.
    */
   filter: (feat: OverpassFeatureLike) => boolean;
+  /** Sometimes, linestrings need to be converted to polygon */
+  map?: (feat: OverpassFeatureLike) => OverpassFeatureLike;
   /** Leaflet styles for each level of detail */
   leafletStyles: CircleMarkerOptions[];
   /** The default level of detail for the given layer. */
@@ -74,13 +76,14 @@ interface TagConfigOpts {
  * Main configuration class for a layer. Layers are categorized by theme (such as roads, waterways, etc.)
  *
  */
-export class TagConfig {
+export class Layer {
   public title: string;
-  public osmElement: string;
+  public osmElement: string | string[];
   public tag: string;
   public values: (string | string[])[];
   public displayNames: string[];
   public filter: (feat: OverpassFeatureLike) => boolean;
+  public map: (feat: OverpassFeatureLike) => OverpassFeatureLike;
   public leafletStyles: CircleMarkerOptions[];
   public defaultDetail: number;
   public detail: number;
@@ -99,6 +102,7 @@ export class TagConfig {
       values,
       displayNames,
       filter,
+      map,
       leafletStyles,
       defaultDetail,
       active,
@@ -115,15 +119,18 @@ export class TagConfig {
     this.values = values;
     this.displayNames = displayNames;
     this.filter = filter;
+    this.map = map || ((feat: OverpassFeatureLike) => feat);
     this.leafletStyles = leafletStyles;
     this.defaultDetail = defaultDetail;
     this.active = active;
 
     this.queryParams = this.values.map((val) => {
       if (Array.isArray(val)) {
-        return val.map((nestedVal) => {
-          return assembleQuery(this.osmElement, this.tag, nestedVal);
-        });
+        return val
+          .map((nestedVal) => {
+            return assembleQuery(this.osmElement, this.tag, nestedVal);
+          })
+          .flat();
       } else {
         return assembleQuery(this.osmElement, this.tag, val);
       }
@@ -173,6 +180,12 @@ export class TagConfig {
 /**
  * Assembles a query part for a given combination of OSM Element, OSM tag and value.
  */
-const assembleQuery = (osmEl: string, tag: string, value: string) => {
-  return `${osmEl}[${tag}="${value}"]`;
+const assembleQuery = (
+  osmEl: string | string[],
+  tag: string,
+  value: string
+): string[] => {
+  return Array.isArray(osmEl)
+    ? osmEl.map((e) => `${e}[${tag}="${value}"]`)
+    : [`${osmEl}[${tag}="${value}"]`];
 };

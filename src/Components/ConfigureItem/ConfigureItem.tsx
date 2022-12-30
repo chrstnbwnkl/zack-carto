@@ -3,14 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ReactElement } from "react";
 import { OSMTags } from "../../config";
 import { makeReadableEnumeration } from "../../utils/misc";
-import { TagConfig } from "../../utils/osm";
+import { Layer } from "../../utils/osm";
 
 interface ConfirgureItemProps {
-  config: TagConfig;
+  config: Layer;
   itemKey: OSMTags;
   sliderVal: number;
   onConfigUpdate: (
-    configKey: keyof TagConfig,
+    configKey: keyof Layer,
     value: string | number | boolean
   ) => void;
 }
@@ -20,8 +20,6 @@ const ConfigureItem = ({
   sliderVal,
   onConfigUpdate,
 }: ConfirgureItemProps): ReactElement => {
-  console.log(config.values);
-  console.log(config.displayNames);
   const selectText = makeReadableEnumeration(config.displayNames, sliderVal);
   return (
     <div className="flex justify-between">
@@ -45,7 +43,7 @@ const ConfigureItem = ({
           {selectText}
         </p>
       </div>
-      <div className="flex pr-6">
+      <div className="flex pr-4 lg:pr-2">
         <FontAwesomeIcon
           size="xl"
           color="#C2C2C2"

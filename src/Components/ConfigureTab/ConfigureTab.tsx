@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { OSMTags, ZackConfig } from "../../config";
-import { TagConfig } from "../../utils/osm";
+import { Layer } from "../../utils/osm";
 
 import ConfigureItem from "../ConfigureItem/ConfigureItem";
 
@@ -8,7 +8,7 @@ interface ConfigureTabProps {
   config: ZackConfig;
   onConfigUpdate: (
     itemKey: OSMTags,
-    configKey: keyof TagConfig,
+    configKey: keyof Layer,
     value: string | number | boolean
   ) => void;
 }

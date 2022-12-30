@@ -5,12 +5,12 @@ import Footer from "./Components/Footer/Footer";
 import { toFeatureCollection, queryOverpass } from "./utils/api";
 import { FeatureCollection } from "geojson";
 
-import { useLocalStorage } from "./utils/hooks";
+import { useLocalStorage, useZackConfigState } from "./utils/hooks";
 import { OSMTags, Settings, ZackConfig } from "./config";
 import MainContent from "./Components/MainContent/MainContent";
 import { AxiosError } from "axios";
 import SettingsModal from "./Components/Settings/Settings";
-import { TagConfig } from "./utils/osm";
+import { Layer } from "./utils/osm";
 
 interface AppProps {
   config: ZackConfig;
@@ -34,6 +34,7 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
     JSON.stringify(defaultSettings)
   );
   const [bounds, setBounds] = useState(new LatLngBounds([0, 0], [0, 0]));
+  // bounds when run is pressed = bounds used for svg generation
   const [runBounds, setRunBounds] = useState(new LatLngBounds([0, 0], [0, 0]));
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -41,11 +42,14 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
   const [uploadedGeoJSON, setUploadedGeoJSON] = useState<FeatureCollection[]>(
     []
   );
-  const [updatedConfig, setUpdatedConfig] = useState(config);
+  const [updatedConfig, setUpdatedConfig] = useZackConfigState(
+    "zackConfig",
+    config
+  );
 
   const onConfigUpdate = (
     itemKey: OSMTags,
-    configKey: keyof TagConfig,
+    configKey: keyof Layer,
     value: string | number | boolean
   ): void => {
     setUpdatedConfig((current: ZackConfig) => {
@@ -62,9 +66,7 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
   const handleRun = () => {
     setIsLoading(true);
     setRunBounds(bounds);
-    if (
-      Object.values(updatedConfig).every((v) => v.detail === 0 || !v.active)
-    ) {
+    if (Object.values(updatedConfig).every((v) => !v.active)) {
       setError(
         "Query cannot be empty: please increase at least one of the sliders."
       );
@@ -86,7 +88,9 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
               const c = config[k];
               return {
                 ...prev,
-                [k]: toFeatureCollection(res.data.elements.filter(c.filter)),
+                [k]: toFeatureCollection(
+                  res.data.elements.filter(c.filter).map(c.map)
+                ),
               };
             }, {});
           });

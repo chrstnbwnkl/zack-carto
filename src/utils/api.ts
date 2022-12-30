@@ -2,9 +2,9 @@ import axios, { AxiosRequestConfig } from "axios";
 import * as L from "leaflet";
 import { ZackConfig } from "../config";
 
-type PointCoordinate = [number, number];
-type LineStringCoordinates = Point[];
-type PolygonCoordinates = LineString[];
+export type PointCoordinate = [number, number];
+export type LineStringCoordinates = PointCoordinate[];
+export type PolygonCoordinates = LineStringCoordinates[];
 
 export interface Point {
   type: "Point";
@@ -21,13 +21,16 @@ export interface Polygon {
   coordinates: PolygonCoordinates;
 }
 
+export interface GeometryCollection {
+  type: "GeometryCollection";
+  geometries: (Point | LineString | Polygon)[];
+}
+
 /**
  * Overpass does not return features comforming to the GeoJSON specification.
  */
 export interface OverpassFeatureLike {
-  geometry: {
-    coordinates: Point | LineString | Polygon;
-  };
+  geometry: GeometryCollection | Point | LineString | Polygon;
   tags: { [k: string]: string };
   id: string;
 }
@@ -44,6 +47,7 @@ export const queryOverpass = (
   const url = `${OVERPASS_URL}?data=[out:json][timeout:${
     axiosOpts?.timeout ?? 20
   }];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`;
+  console.log(url);
   return axios.get(url, {
     ...axiosOpts,
     timeout: ((axiosOpts?.timeout ?? 20) + 3) * 1000,
