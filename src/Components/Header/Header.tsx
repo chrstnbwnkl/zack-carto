@@ -34,7 +34,7 @@ const Header = ({
     <header className="flex h-24 w-full flex-row content-center justify-between space-x-1 border-b border-blue-90 bg-blue-50">
       <div className="flex flex-1 flex-row justify-evenly self-center first:mr-auto last:ml-auto lg:p-2">
         <Button
-          additionalClasses={`relative m-1 h-full w-20 border-green p-2 drop-shadow-md hover:bg-green md:w-12`}
+          className={`relative m-1 h-full w-20 border-green p-2 drop-shadow-md hover:bg-green md:w-12`}
           onClick={onRun}
           title="Run overpass query"
         >
@@ -46,7 +46,7 @@ const Header = ({
           />
         </Button>
         <Button
-          additionalClasses={`relative m-1 h-full w-40 p-2 lg:w-20  md:w-12 ${
+          className={`relative m-1 h-full w-40 p-2 lg:w-20  md:w-12 ${
             isDownloadable
               ? "border-red bg-white hover:bg-red"
               : "cursor-help border-gray bg-gray"

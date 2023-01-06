@@ -2,24 +2,30 @@ import { useState } from "react";
 import { OSMTags, ZackConfig } from "../config";
 import { Layer } from "./osm";
 
+type JSONValue = number | string | boolean | JSONArray | JSONObject;
+type JSONArray = JSONValue[];
+type JSONObject = { [k: string]: JSONValue };
+
 /**
  * Custom hook that uses the browser's local storage to
  * persist state across reloads and sessions.
  */
-export const useLocalStorage = (
+export function useJSONLocalStorage<T>(
   key: string,
-  initialValue: string
-): [string, (newValue: string | ((v: string) => string)) => void] => {
-  const [value, setValue] = useState(localStorage.getItem(key) || initialValue);
-  const setStorage = (newValue: string | ((v: string) => string)) => {
+  initialValue: T
+): [T, (newValue: T | ((v: T) => T)) => void] {
+  const [value, setValue] = useState(
+    JSON.parse(localStorage.getItem(key) as string) || initialValue
+  );
+  const setStorage = (newValue: T | ((v: T) => T)) => {
     const valueToStore =
       newValue instanceof Function ? newValue(value) : newValue;
-    localStorage.setItem(key, valueToStore);
+    localStorage.setItem(key, JSON.stringify(valueToStore));
     setValue(valueToStore);
   };
 
   return [value, setStorage];
-};
+}
 
 type PersistableZackConfig = {
   [k in OSMTags]: Pick<Layer, "active" | "detail">;

@@ -1,8 +1,9 @@
 import React from "react";
+import { Settings } from "../../config";
 
 interface SettingsProps {
   onChange: (key: string, value: number | string) => void;
-  settings: string;
+  settings: Settings;
 }
 
 const SettingsModal = ({ onChange, settings }: SettingsProps) => {
@@ -30,7 +31,7 @@ const SettingsModal = ({ onChange, settings }: SettingsProps) => {
                 className="input-bordered input h-8 w-20"
                 min="1"
                 max="360"
-                value={JSON.parse(settings)?.timeout}
+                value={settings?.timeout}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   onChange("timeout", Number(e.target.value));
                 }}

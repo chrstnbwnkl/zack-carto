@@ -5,7 +5,7 @@ import { OSMTags } from "../../config";
 import { makeReadableEnumeration } from "../../utils/misc";
 import { Layer } from "../../utils/osm";
 
-interface ConfirgureItemProps {
+interface ConfigureSliderItemProps {
   config: Layer;
   itemKey: OSMTags;
   sliderVal: number;
@@ -14,12 +14,12 @@ interface ConfirgureItemProps {
     value: string | number | boolean
   ) => void;
 }
-const ConfigureItem = ({
+const ConfigureSliderItem = ({
   config,
   itemKey,
   sliderVal,
   onConfigUpdate,
-}: ConfirgureItemProps): ReactElement => {
+}: ConfigureSliderItemProps): ReactElement => {
   const selectText = makeReadableEnumeration(config.displayNames, sliderVal);
   return (
     <div className="flex justify-between">
@@ -56,4 +56,4 @@ const ConfigureItem = ({
   );
 };
 
-export default ConfigureItem;
+export default ConfigureSliderItem;

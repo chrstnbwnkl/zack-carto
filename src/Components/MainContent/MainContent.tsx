@@ -1,21 +1,19 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faChevronDown,
-  faChevronUp,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FeatureCollection } from "geojson";
 import { LatLngBounds } from "leaflet";
 import React, { useState } from "react";
-import { OSMTags, ZackConfig } from "../../config";
-import ConfigureTab from "../ConfigureTab/ConfigureTab";
+import { OSMTags, Settings, ZackConfig } from "../../config";
+import ConfigureSliderView from "../ConfigureSliderView/ConfigureSliderView";
 import Error from "../Error/Error";
 import Map from "../Map/Map";
 import { Layer } from "../../utils/osm";
-import Button from "../Button/Button";
+import AddLayerSelect from "../AddLayerSelect/AddLayerSelect";
+import ToggleAdvancedMode from "../ToggleAdvancedMode/ToggleAdvancedMode";
+import { MapView } from "../../App";
 
 interface MainContentProps {
-  mapDefaults: string;
+  mapDefaults: MapView;
   handleMove: (
     bounds: LatLngBounds,
     center?: [number, number] | undefined,
@@ -23,13 +21,15 @@ interface MainContentProps {
   ) => void;
   featureCollections: { [k: string]: FeatureCollection };
   uploadedGeoJSON: FeatureCollection[];
-  updatedConfig: ZackConfig;
+  config: ZackConfig;
+  settings: Settings;
   error: string;
   onConfigUpdate: (
     itemKey: OSMTags,
     configKey: keyof Layer,
     value: string | number | boolean
   ) => void;
+  onSettingsUpdate: (key: string, value: number | string | boolean) => void;
 }
 
 const MainContent = ({
@@ -37,9 +37,11 @@ const MainContent = ({
   handleMove,
   featureCollections,
   uploadedGeoJSON,
-  updatedConfig,
+  config,
+  settings,
   error,
   onConfigUpdate,
+  onSettingsUpdate,
 }: MainContentProps) => {
   const [configPanelClosed, setConfigPanelClosed] = useState(false);
 
@@ -49,26 +51,27 @@ const MainContent = ({
   return (
     <div className="flex min-h-0 w-screen flex-1 md:flex-col">
       <div
-        className={`relative flex w-4/12 flex-col justify-between overflow-y-auto md:order-2 md:w-full ${
+        className={`relative transition-[height] flex w-4/12 flex-col justify-between overflow-y-auto md:order-2 md:w-full ${
           configPanelClosed ? "md:h-10 md:overflow-y-hidden" : "md:h-4/6"
         }`}
       >
         <button
-          className={`absolute ${
+          className={`absolute hover:animate-ping ${
             configPanelClosed
               ? "top-2 left-1/2 -translate-x-1/2 transform"
               : "top-4 right-4"
-          } z-10 hidden cursor-pointer hover:animate-bounce md:block`}
+          } z-10 hidden cursor-pointer md:block`}
           title="Hide config panel"
           onClick={handleConfigPanelClose}
         >
           <FontAwesomeIcon
             icon={configPanelClosed ? faChevronUp : faChevronDown}
+            className="hover:scale-[1.2] transition-all"
           />
         </button>
         <div
-          className={`transition-all ${
-            configPanelClosed ? "md:h-0 md:opacity-0" : ""
+          className={`${
+            configPanelClosed ? "md:h-0 overflow-hidden" : ""
           }`}
         >
           <h3 className="p-3 text-center text-xl font-bold">
@@ -85,50 +88,30 @@ const MainContent = ({
             </a>
             .
           </p>
-          <ConfigureTab
-            config={updatedConfig}
+          <ConfigureSliderView
+            config={config}
             onConfigUpdate={onConfigUpdate}
           />
           <div className="flex justify-center self-end p-4 ">
-            <label className="label"></label>
-            <select
-              className="select-bordered select border-2 border-blue-90 text-blue drop-shadow-lg"
-              defaultValue="default"
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                e.preventDefault();
-                e.target.value = "default"; // set placeholder as selected value
-              }}
+            <AddLayerSelect config={config} onConfigUpdate={onConfigUpdate} />
+            <ToggleAdvancedMode
+              settings={settings}
+              onSettingsUpdate={onSettingsUpdate}
+              className={`btn ml-4 flex justify-center self-end border-2 border-white p-4 text-blue drop-shadow-lg hover:border-green hover:bg-white ${
+                settings.advanced ? "bg-green" : "bg-gray"
+              }`}
             >
-              <option key="default" value="default" disabled>
-                Add layer
-              </option>
-              {(Object.keys(updatedConfig) as OSMTags[])
-                .filter((k) => !updatedConfig[k].active)
-                .map((k) => {
-                  const c: Layer = updatedConfig[k];
-                  return (
-                    <option
-                      key={k}
-                      onClick={(e: React.MouseEvent<HTMLOptionElement>) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onConfigUpdate(k, "active", true);
-                      }}
-                    >
-                      {c.title}
-                    </option>
-                  );
-                })}
-            </select>
+              Advanced Mode
+            </ToggleAdvancedMode>
           </div>
         </div>
       </div>
       <Map
-        view={JSON.parse(mapDefaults)}
+        view={mapDefaults}
         onMove={handleMove}
         featureCollections={featureCollections}
         uploadedGeoJSON={uploadedGeoJSON}
-        config={updatedConfig}
+        config={config}
         configPanelClosed={configPanelClosed}
       />
       <Error errorMessage={error} />

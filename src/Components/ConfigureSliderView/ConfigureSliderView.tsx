@@ -2,9 +2,9 @@ import React, { ReactElement } from "react";
 import { OSMTags, ZackConfig } from "../../config";
 import { Layer } from "../../utils/osm";
 
-import ConfigureItem from "../ConfigureItem/ConfigureItem";
+import ConfigureSliderItem from "../ConfigureSliderItem/ConfigureSliderItem";
 
-interface ConfigureTabProps {
+interface ConfigureSliderViewProps {
   config: ZackConfig;
   onConfigUpdate: (
     itemKey: OSMTags,
@@ -12,10 +12,11 @@ interface ConfigureTabProps {
     value: string | number | boolean
   ) => void;
 }
-const ConfigureTab = ({
+
+const ConfigureSliderView = ({
   config,
   onConfigUpdate,
-}: ConfigureTabProps): ReactElement => {
+}: ConfigureSliderViewProps): ReactElement => {
   return (
     <>
       <div className="p-3">
@@ -25,7 +26,7 @@ const ConfigureTab = ({
             const c = config[k];
             return (
               <div key={k} className="py-2">
-                <ConfigureItem
+                <ConfigureSliderItem
                   key={k}
                   itemKey={k}
                   config={c}
@@ -41,4 +42,4 @@ const ConfigureTab = ({
   );
 };
 
-export default ConfigureTab;
+export default ConfigureSliderView;

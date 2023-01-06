@@ -5,7 +5,7 @@ import Footer from "./Components/Footer/Footer";
 import { toFeatureCollection, queryOverpass } from "./utils/api";
 import { FeatureCollection } from "geojson";
 
-import { useLocalStorage, useZackConfigState } from "./utils/hooks";
+import { useJSONLocalStorage, useZackConfigState } from "./utils/hooks";
 import { OSMTags, Settings, ZackConfig } from "./config";
 import MainContent from "./Components/MainContent/MainContent";
 import { AxiosError } from "axios";
@@ -16,6 +16,11 @@ interface AppProps {
   config: ZackConfig;
   defaultSettings: Settings;
 }
+
+export interface MapView {
+  center: [number, number];
+  zoom: number;
+}
 /**
  * Main application.
  *
@@ -24,14 +29,14 @@ interface AppProps {
  * @returns
  */
 export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
-  const [mapDefaults, setMapDefaults] = useLocalStorage(
-    "mapstate",
-    JSON.stringify({ center: [50.93, 6.95], zoom: 13 })
-  );
+  const [mapView, setMapView] = useJSONLocalStorage<MapView>("mapstate", {
+    center: [50.93, 6.95],
+    zoom: 13,
+  });
 
-  const [settings, setSettings] = useLocalStorage(
+  const [settings, setSettings] = useJSONLocalStorage(
     "zackSettings",
-    JSON.stringify(defaultSettings)
+    defaultSettings
   );
   const [bounds, setBounds] = useState(new LatLngBounds([0, 0], [0, 0]));
   // bounds when run is pressed = bounds used for svg generation
@@ -47,7 +52,7 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
     config
   );
 
-  const onConfigUpdate = (
+  const handleConfigUpdate = (
     itemKey: OSMTags,
     configKey: keyof Layer,
     value: string | number | boolean
@@ -77,9 +82,9 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
       return;
     }
     setError("");
-    const settingsObj: Settings = JSON.parse(settings);
+
     queryOverpass(updatedConfig, bounds, {
-      timeout: Number(settingsObj?.timeout ?? 0), // leave a buffer for Overpass to respond
+      timeout: Number(settings?.timeout ?? 0), // leave a buffer for Overpass to respond
     })
       .then((res) => {
         if (res.data.elements.length > 0) {
@@ -145,7 +150,7 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
 
     // protect when called explicitly before map moved
     if (center && zoom) {
-      setMapDefaults(JSON.stringify({ center: center, zoom: zoom }));
+      setMapView({ center: center, zoom: zoom });
     }
   };
 
@@ -174,13 +179,15 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
     });
   };
 
-  const handleSettingsChange = (key: string, value: number | string): void => {
-    setSettings((curr: string) => {
-      const obj = JSON.parse(curr);
-      return JSON.stringify({
-        ...obj,
+  const handleSettingsChange = (
+    key: string,
+    value: number | string | boolean
+  ): void => {
+    setSettings((curr: Settings): Settings => {
+      return {
+        ...curr,
         [key]: value,
-      });
+      };
     });
   };
 
@@ -195,13 +202,15 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
           onUpload={handleUpload}
         />
         <MainContent
-          mapDefaults={mapDefaults}
+          mapDefaults={mapView}
           handleMove={handleMove}
           featureCollections={featureCollections}
           uploadedGeoJSON={uploadedGeoJSON}
-          updatedConfig={updatedConfig}
+          config={updatedConfig}
+          settings={settings}
           error={error}
-          onConfigUpdate={onConfigUpdate}
+          onConfigUpdate={handleConfigUpdate}
+          onSettingsUpdate={handleSettingsChange}
         />
         <Footer className="flex h-12 w-full flex-row content-end justify-center border-t border-blue-90 bg-blue-50 py-1" />
       </div>

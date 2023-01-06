@@ -68,7 +68,6 @@ export const zackConfig: ZackConfig = {
             | PointCoordinate
             | PolygonCoordinates = geom.coordinates;
           if (geom.type === "LineString") {
-            console.log(feat.tags);
             type = "Polygon";
             coords = [geom.coordinates];
           }
@@ -191,9 +190,12 @@ export const zackConfig: ZackConfig = {
   }),
 };
 
-export interface Settings {
+export type Settings = {
   timeout: number;
-}
+  advanced: boolean;
+};
+
 export const defaultSettings: Settings = {
   timeout: 20,
+  advanced: false,
 };

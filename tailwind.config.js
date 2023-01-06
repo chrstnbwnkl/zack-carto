@@ -32,6 +32,16 @@ module.exports = {
       green: "#37E69D",
       orange: "#E69D37",
     },
+    keyframes: {
+      daisyPop: {
+        '0%': { transform: 'scale(0.95)' },
+        '40%': { transform: 'scale(1.02)' },
+        '100%': { transform: 'scale(1)' },
+      }
+    },
+    animation: {
+      daisyPop: 'daisyPop 0.25s ease-out',
+    },
   },
   daisyui: {
     themes: [
