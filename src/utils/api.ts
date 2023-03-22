@@ -35,7 +35,7 @@ export interface OverpassFeatureLike {
   id: string;
 }
 
-const OVERPASS_URL = "https://lz4.overpass-api.de/api/interpreter";
+const OVERPASS_URL = "https://z.overpass-api.de/api/interpreter";
 
 export const queryOverpass = (
   reqObj: ZackConfig,
