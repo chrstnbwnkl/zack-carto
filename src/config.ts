@@ -84,7 +84,7 @@ export const zackConfig: ZackConfig = {
         color: "#000",
         weight: 1,
         fill: true,
-        fillColor: "black",
+        fillColor: "green",
         fillOpacity: 0.5,
       },
       { color: "#000", weight: 1, fill: true, fillColor: "green" },

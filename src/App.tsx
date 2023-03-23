@@ -127,6 +127,8 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
       config: JSON.stringify(updatedConfig),
       bounds: L.rectangle(runBounds).toGeoJSON(),
     };
+    console.log(featureCollections);
+    console.log(data.bounds);
     w.postMessage(data);
 
     w.onmessage = (svg) => {
