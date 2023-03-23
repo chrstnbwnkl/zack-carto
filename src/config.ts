@@ -192,10 +192,12 @@ export const zackConfig: ZackConfig = {
 
 export type Settings = {
   timeout: number;
+  url: string;
   advanced: boolean;
 };
 
 export const defaultSettings: Settings = {
   timeout: 20,
+  url: "https://z.overpass-api.de/api/interpreter",
   advanced: false,
 };

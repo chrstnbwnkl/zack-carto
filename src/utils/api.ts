@@ -35,16 +35,15 @@ export interface OverpassFeatureLike {
   id: string;
 }
 
-const OVERPASS_URL = "https://z.overpass-api.de/api/interpreter";
-
 export const queryOverpass = (
+  overpassUrl: string,
   reqObj: ZackConfig,
   bounds: L.LatLngBounds,
   axiosOpts?: AxiosRequestConfig
 ) => {
   const boundsParam = boundsToParam(bounds);
   const reqStr = makeReqParams(reqObj, boundsParam);
-  const url = `${OVERPASS_URL}?data=[out:json][timeout:${
+  const url = `${overpassUrl}?data=[out:json][timeout:${
     axiosOpts?.timeout ?? 20
   }];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`;
   console.log(url);

@@ -83,7 +83,7 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
     }
     setError("");
 
-    queryOverpass(updatedConfig, bounds, {
+    queryOverpass(settings.url, updatedConfig, bounds, {
       timeout: Number(settings?.timeout ?? 0), // leave a buffer for Overpass to respond
     })
       .then((res) => {
