@@ -13,9 +13,12 @@ const ToggleAdvancedMode: FunctionComponent<
   return (
     <button
       onClick={() => {
-        onSettingsUpdate("advanced", !settings.advanced);
+        // onSettingsUpdate("advanced", !settings.advanced);
       }}
-      className={`${className || ""} normal-case`}
+      title="Coming soon"
+      className={`${
+        className || ""
+      } pointer-events-auto cursor-help normal-case`}
     >
       {children}
     </button>
