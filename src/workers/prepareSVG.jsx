@@ -1,13 +1,22 @@
-import React from "react"
-import * as ReactDOMServer from "react-dom/server"
-import * as d3Geo from "d3-geo"
-import * as d3Tile from "d3-tile"
+import React from "react";
+import * as ReactDOMServer from "react-dom/server";
+import * as d3Geo from "d3-geo";
+import * as d3Tile from "d3-tile";
 
-const d3 = { ...d3Geo, ...d3Tile }
+const d3 = { ...d3Geo, ...d3Tile };
 
 const tileUrl = (x, y, z) => {
-  return `https://tile.openstreetmap.org/${z}/${x}/${y}.png`
-}
+  return `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
+};
+
+const cleanProperties = (s) => {
+  return s
+    .replaceAll(":", "-")
+    .replaceAll("_", "-")
+    .replaceAll("@", "")
+    .replaceAll("~", "")
+    .toLocaleLowerCase();
+};
 
 export const featureCollectionsToSvg = ({
   fc,
@@ -15,7 +24,7 @@ export const featureCollectionsToSvg = ({
   config,
   bounds,
 }) => {
-  const [width, height, buffer] = [1000, 700, 40] // TODO: bounds to aspect ratio
+  const [width, height, buffer] = [1000, 700, 40]; // TODO: bounds to aspect ratio
 
   const projection = d3.geoMercator().fitExtent(
     [
@@ -23,16 +32,16 @@ export const featureCollectionsToSvg = ({
       [width - buffer, height - buffer],
     ],
     bounds
-  )
+  );
 
-  const path = d3.geoPath(projection)
+  const path = d3.geoPath(projection);
 
   const tile = d3
     .tile()
     .size([width, height])
     .scale(projection.scale() * 2 * Math.PI)
     .translate(projection([0, 0]))
-    .tileSize(256)
+    .tileSize(256);
 
   const svg = (
     <svg
@@ -61,7 +70,7 @@ export const featureCollectionsToSvg = ({
                 width={t[3]}
                 height={t[3]}
               ></image>
-            )
+            );
           })}
       </g>
       <g id="uploaded-geojson">
@@ -73,25 +82,35 @@ export const featureCollectionsToSvg = ({
                   (prev, propKey) => {
                     return {
                       ...prev,
-                      [`data-${propKey
-                        .replaceAll(":", "-")
-                        .replaceAll("_", "-")}`]:
-                        uploadedFeat.properties[propKey],
-                    }
+                      [`data-${cleanProperties(propKey)}`]: cleanProperties(
+                        uploadedFeat.properties[propKey]
+                      ),
+                    };
                   },
                   {}
-                )
+                );
                 return (
                   <g key={`${fix}`} {...dataAttrs}>
-                    {uploadedFeat.geometry.type !== "Point" ? (
+                    {["Polygon", "MultiPolygon"].includes(
+                      uploadedFeat.geometry.type
+                    ) ? (
                       <path
                         d={path(uploadedFeat)}
-                        {...{
-                          stroke: "#87784e",
-                          strokeWidth: 2,
-                          fill: "none",
-                          strokeLinecap: "round",
-                        }}
+                        stroke="#87784e"
+                        strokeWidth="2"
+                        fill="#B5A67D"
+                        strokeLinecap="round"
+                        fillOpacity="0.3"
+                      ></path>
+                    ) : ["LineString", "MultiLineString"].includes(
+                        uploadedFeat.geometry.type
+                      ) ? (
+                      <path
+                        d={path(uploadedFeat)}
+                        stroke="#87784e"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
                       ></path>
                     ) : (
                       <circle
@@ -102,18 +121,18 @@ export const featureCollectionsToSvg = ({
                         stroke={"#87784e"}
                         fillOpacity={0.4}
                         strokeWidth={2}
-                        {...dataAttrs}
                       ></circle>
                     )}
                   </g>
-                )
+                );
               })}
             </g>
-          )
+          );
         })}
       </g>
       {Object.keys(fc).map((k) => {
-        const c = config[k]
+        const c = config[k];
+
         return (
           <g key={k} id={k}>
             {c.values.map((val, i) => {
@@ -122,9 +141,9 @@ export const featureCollectionsToSvg = ({
                   {fc[k].features
                     .filter((feat) => {
                       if (Array.isArray(val)) {
-                        return val.includes(feat.properties[c.tag])
+                        return val.includes(feat.properties[c.tag]);
                       } else {
-                        return feat.properties[c.tag] === val
+                        return feat.properties[c.tag] === val;
                       }
                     })
                     .map((feat) => {
@@ -132,14 +151,12 @@ export const featureCollectionsToSvg = ({
                         (prev, propKey) => {
                           return {
                             ...prev,
-                            [`data-${propKey
-                              .replaceAll(":", "-")
-                              .replaceAll("_", "-")}`]:
-                              feat.properties[propKey],
-                          }
+                            [`data-${cleanProperties(propKey)}`]:
+                              cleanProperties(feat.properties[propKey]),
+                          };
                         },
                         {}
-                      )
+                      );
                       return (
                         <g
                           key={`${k}-${feat.properties.id}`}
@@ -147,29 +164,28 @@ export const featureCollectionsToSvg = ({
                           {...dataAttrs}
                         >
                           {c.osmElement !== "node" ? (
-                            <path d={path(feat)} {...c._d3Styles[i]}></path>
+                            <path d={path(feat)} {...c.d3Styles[i]}></path>
                           ) : (
                             <circle
                               cx={projection(feat.geometry.coordinates)[0]}
                               cy={projection(feat.geometry.coordinates)[1]}
-                              {...c._d3Styles[i]}
-                              {...dataAttrs}
+                              {...c.d3Styles[i]}
                             ></circle>
                           )}
                         </g>
-                      )
+                      );
                     })}
                 </g>
-              )
+              );
             })}
           </g>
-        )
+        );
       })}
     </svg>
-  )
+  );
 
-  return ReactDOMServer.renderToStaticMarkup(svg)
-}
+  return ReactDOMServer.renderToStaticMarkup(svg);
+};
 
 onmessage = (e) => {
   const svg = featureCollectionsToSvg({
@@ -177,6 +193,6 @@ onmessage = (e) => {
     uploadedGeoJSON: e.data.uploadedGeoJSON,
     config: JSON.parse(e.data.config),
     bounds: e.data.bounds,
-  })
-  postMessage(svg)
-}
+  });
+  postMessage(svg);
+};
