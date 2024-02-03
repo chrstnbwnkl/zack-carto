@@ -4,6 +4,7 @@ import {
   PointCoordinate,
   PolygonCoordinates,
 } from "./utils/api";
+import { isClosed } from "./utils/geom";
 import { Layer } from "./utils/osm";
 
 export type OSMTags = "urbanLanduse" | "roads" | "waterways" | "places";
@@ -43,41 +44,71 @@ export const zackConfig: ZackConfig = {
         return feat.tags["landuse"] !== undefined;
       }
     },
-    map: (feat: OverpassFeatureLike) => {
+    /**
+     * Land use polygons are often returned as Geometry Collections
+     * and these contain LineString geometries that actually close,
+     * so we'd like to convert these to Polygons
+     */
+    explodeCollection: (feat: OverpassFeatureLike) => {
+      const feats: OverpassFeatureLike[] = [];
+
+      // if it's not a geometry collection
       if (feat.geometry.type !== "GeometryCollection") {
-        let type = feat.geometry.type;
-        let coords:
-          | LineStringCoordinates
-          | PointCoordinate
-          | PolygonCoordinates = feat.geometry.coordinates;
-        if (feat.geometry.type === "LineString") {
-          console.log(feat.tags);
-          type = "Polygon";
-          coords = [feat.geometry.coordinates];
+        switch (feat.geometry.type) {
+          // we just want linestrings if they're closed
+          case "LineString":
+            if (isClosed(feat.geometry)) {
+              const newFeat: OverpassFeatureLike = {
+                ...feat,
+                geometry: {
+                  ...feat.geometry,
+                  type: "Polygon",
+                  coordinates: [feat.geometry.coordinates],
+                },
+              };
+              feats.push(newFeat);
+            }
+            break;
+          // or the polys
+          case "Polygon":
+            feats.push(feat);
+            break;
+          default:
+            break;
         }
-
-        feat.geometry.type = type;
-        feat.geometry.coordinates = coords;
-
-        return feat;
       } else {
         feat.geometry.geometries.forEach((geom) => {
-          let type = geom.type;
-          let coords:
-            | LineStringCoordinates
-            | PointCoordinate
-            | PolygonCoordinates = geom.coordinates;
-          if (geom.type === "LineString") {
-            type = "Polygon";
-            coords = [geom.coordinates];
+          switch (geom.type) {
+            // we just want linestrings if they're closed
+            case "LineString":
+              if (isClosed(geom)) {
+                const newFeat: OverpassFeatureLike = {
+                  ...feat,
+                  geometry: {
+                    type: "Polygon",
+                    coordinates: [geom.coordinates],
+                  },
+                };
+                feats.push(newFeat);
+              }
+              break;
+            // or the polys
+            case "Polygon":
+              const newFeat: OverpassFeatureLike = {
+                ...feat,
+                geometry: {
+                  type: "Polygon",
+                  coordinates: geom.coordinates,
+                },
+              };
+              feats.push(newFeat);
+              break;
+            default:
+              break;
           }
-
-          geom.type = type;
-          geom.coordinates = coords;
         });
       }
-
-      return feat;
+      return feats;
     },
     leafletStyles: [
       {
@@ -87,9 +118,27 @@ export const zackConfig: ZackConfig = {
         fillColor: "green",
         fillOpacity: 0.5,
       },
-      { color: "#000", weight: 1, fill: true, fillColor: "green" },
-      { color: "#000", weight: 1, fill: true, fillColor: "green" },
-      { color: "#000", weight: 1, fill: true, fillColor: "green" },
+      {
+        color: "#000",
+        weight: 1,
+        fill: true,
+        fillColor: "green",
+        fillOpacity: 0.3,
+      },
+      {
+        color: "#000",
+        weight: 1,
+        fill: true,
+        fillColor: "green",
+        fillOpacity: 0.2,
+      },
+      {
+        color: "#000",
+        weight: 1,
+        fill: true,
+        fillColor: "green",
+        fillOpacity: 0.2,
+      },
     ],
     defaultDetail: 2,
     active: false,

@@ -91,15 +91,26 @@ export const featureCollectionsToSvg = ({
                 );
                 return (
                   <g key={`${fix}`} {...dataAttrs}>
-                    {uploadedFeat.geometry.type !== "Point" ? (
+                    {["Polygon", "MultiPolygon"].includes(
+                      uploadedFeat.geometry.type
+                    ) ? (
                       <path
                         d={path(uploadedFeat)}
-                        {...{
-                          stroke: "#87784e",
-                          strokeWidth: 2,
-                          fill: "red",
-                          strokeLinecap: "round",
-                        }}
+                        stroke="#87784e"
+                        strokeWidth="2"
+                        fill="#B5A67D"
+                        strokeLinecap="round"
+                        fillOpacity="0.3"
+                      ></path>
+                    ) : ["LineString", "MultiLineString"].includes(
+                        uploadedFeat.geometry.type
+                      ) ? (
+                      <path
+                        d={path(uploadedFeat)}
+                        stroke="#87784e"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
                       ></path>
                     ) : (
                       <circle
@@ -121,6 +132,7 @@ export const featureCollectionsToSvg = ({
       </g>
       {Object.keys(fc).map((k) => {
         const c = config[k];
+
         return (
           <g key={k} id={k}>
             {c.values.map((val, i) => {

@@ -10,7 +10,11 @@ const SettingsModal = ({ onChange, settings }: SettingsProps) => {
   return (
     <>
       <input type="checkbox" id="settings-modal" className="modal-toggle" />
-      <label htmlFor="settings-modal" className="modal cursor-pointer">
+      <label
+        htmlFor="settings-modal"
+        className="modal cursor-pointer"
+        style={{ zIndex: 9999 }}
+      >
         <label className="modal-box relative w-3/4 max-w-xl" htmlFor="">
           <h2 className="pb-6 text-center text-2xl font-bold text-blue drop-shadow-md">
             Settings

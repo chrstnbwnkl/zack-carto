@@ -63,7 +63,7 @@ interface TagConfigOpts {
    */
   filter: (feat: OverpassFeatureLike) => boolean;
   /** Sometimes, linestrings need to be converted to polygon */
-  map?: (feat: OverpassFeatureLike) => OverpassFeatureLike;
+  explodeCollection?: (feat: OverpassFeatureLike) => OverpassFeatureLike[];
   /** Leaflet styles for each level of detail */
   leafletStyles: CircleMarkerOptions[];
   /** The default level of detail for the given layer. */
@@ -83,7 +83,9 @@ export class Layer {
   public values: (string | string[])[];
   public displayNames: string[];
   public filter: (feat: OverpassFeatureLike) => boolean;
-  public map: (feat: OverpassFeatureLike) => OverpassFeatureLike;
+  public explodeCollection: (
+    feat: OverpassFeatureLike
+  ) => OverpassFeatureLike[];
   public leafletStyles: CircleMarkerOptions[];
   public defaultDetail: number;
   public detail: number;
@@ -102,7 +104,7 @@ export class Layer {
       values,
       displayNames,
       filter,
-      map,
+      explodeCollection,
       leafletStyles,
       defaultDetail,
       active,
@@ -119,7 +121,8 @@ export class Layer {
     this.values = values;
     this.displayNames = displayNames;
     this.filter = filter;
-    this.map = map || ((feat: OverpassFeatureLike) => feat);
+    this.explodeCollection =
+      explodeCollection || ((feat: OverpassFeatureLike) => [feat]);
     this.leafletStyles = leafletStyles;
     this.defaultDetail = defaultDetail;
     this.active = active;

@@ -28,7 +28,7 @@ const Header = ({
   onUpload,
 }: HeaderProps): ReactElement => {
   const icon = isLoading ? faSpinner : faPlay;
-  const iconClassName = isLoading ? "animate-spin" : "";
+  const iconClassName = isLoading ? "fa-spin" : "";
 
   return (
     <header className="flex h-24 w-full flex-row content-center justify-between space-x-1 border-b border-blue-90 bg-blue-50">

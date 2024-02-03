@@ -2,7 +2,11 @@ import React, { ReactElement, useState } from "react";
 import L, { LatLngBounds } from "leaflet";
 import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
-import { toFeatureCollection, queryOverpass } from "./utils/api";
+import {
+  toFeatureCollection,
+  queryOverpass,
+  OverpassFeatureLike,
+} from "./utils/api";
 import { FeatureCollection } from "geojson";
 
 import { useJSONLocalStorage, useZackConfigState } from "./utils/hooks";
@@ -94,7 +98,16 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
               return {
                 ...prev,
                 [k]: toFeatureCollection(
-                  res.data.elements.filter(c.filter).map(c.map)
+                  // TODO: explode these
+                  res.data.elements
+                    .filter(c.filter)
+                    .reduce(
+                      (acc: OverpassFeatureLike[], el: OverpassFeatureLike) => [
+                        ...acc,
+                        ...c.explodeCollection(el),
+                      ],
+                      []
+                    )
                 ),
               };
             }, {});
@@ -135,7 +148,14 @@ export const App = ({ config, defaultSettings }: AppProps): ReactElement => {
       a.href = window.URL.createObjectURL(
         new Blob([svg.data], { type: "text/plain" })
       );
-      a.setAttribute("download", "zack-download.svg");
+      a.setAttribute(
+        "download",
+        `zack-${new Date()
+          .toISOString()
+          .slice(0, 16)
+          .replace("T", "-")
+          .replace(":", "-")}.svg`
+      );
 
       a.click();
 

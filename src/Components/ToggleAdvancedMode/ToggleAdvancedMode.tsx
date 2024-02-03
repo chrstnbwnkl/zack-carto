@@ -11,17 +11,18 @@ const ToggleAdvancedMode: FunctionComponent<
   PropsWithChildren<ToggleAdvancedModeProps>
 > = ({ settings, onSettingsUpdate, className, children }) => {
   return (
-    <button
-      onClick={() => {
-        // onSettingsUpdate("advanced", !settings.advanced);
-      }}
-      title="Coming soon"
-      className={`${
-        className || ""
-      } pointer-events-auto cursor-help normal-case`}
-    >
-      {children}
-    </button>
+    <></>
+    // <button
+    //   onClick={() => {
+    //     // onSettingsUpdate("advanced", !settings.advanced);
+    //   }}
+    //   title="Coming soon"
+    //   className={`${
+    //     className || ""
+    //   } pointer-events-auto cursor-help normal-case hover:none`}
+    // >
+    //   {children}
+    // </button>
   );
 };
 

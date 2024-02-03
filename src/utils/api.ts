@@ -27,7 +27,7 @@ export interface GeometryCollection {
 }
 
 /**
- * Overpass does not return features comforming to the GeoJSON specification.
+ * Overpass does not return features conforming to the GeoJSON specification.
  */
 export interface OverpassFeatureLike {
   geometry: GeometryCollection | Point | LineString | Polygon;
@@ -46,7 +46,6 @@ export const queryOverpass = (
   const url = `${overpassUrl}?data=[out:json][timeout:${
     axiosOpts?.timeout ?? 20
   }];(${reqStr}); convert item ::=::,::geom=geom(),_osm_type=type();out geom;>;out skel qt;`;
-  console.log(url);
   return axios.get(url, {
     ...axiosOpts,
     timeout: ((axiosOpts?.timeout ?? 20) + 3) * 1000,

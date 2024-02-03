@@ -45,12 +45,9 @@ export const useZackConfigState = (
     JSON.parse(localStorage.getItem(key) as string) ||
       (Object.keys(initialConfig) as OSMTags[]).reduce((prev, k) => {
         const c: Layer = initialConfig[k];
-        console.log("shouldnt run");
         return { ...prev, [k]: { detail: c.detail, active: c.active } };
       }, {})
   );
-  console.log(persistedConfig);
-
   const [config, setConfig] = useState(initialConfig);
 
   const setStorage = (
