@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/zack-carto/static/css/main.50ab2e77.css",
+    "main.js": "/zack-carto/static/js/main.1b28aaab.js",
+    "static/js/799.397a75df.chunk.js": "/zack-carto/static/js/799.397a75df.chunk.js",
+    "static/js/794.2096926f.chunk.js": "/zack-carto/static/js/794.2096926f.chunk.js",
+    "index.html": "/zack-carto/index.html",
+    "static/media/twemoji-26a1.svg": "/zack-carto/static/media/twemoji-26a1.ed147b084b17cf298eae0a2b0d3d8eed.svg",
+    "main.50ab2e77.css.map": "/zack-carto/static/css/main.50ab2e77.css.map",
+    "main.1b28aaab.js.map": "/zack-carto/static/js/main.1b28aaab.js.map",
+    "799.397a75df.chunk.js.map": "/zack-carto/static/js/799.397a75df.chunk.js.map",
+    "794.2096926f.chunk.js.map": "/zack-carto/static/js/794.2096926f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.50ab2e77.css",
+    "static/js/main.1b28aaab.js"
+  ]
+}
